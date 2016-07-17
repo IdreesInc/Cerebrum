@@ -16,7 +16,7 @@
 			network.addConnection("input", "hidden");
 			network.addConnection("hidden", "output");
 			network.calculate();
-			alert(network.getNode("output").value);
+			return network.getNode("output").value;
 		}
 		document.getElementById("p").innerHTML = run();
 	</script>
