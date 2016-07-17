@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<title>Test Cases</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="network.js"></script>
+
+<body>
+	<p id="p"></p>
+	<script>	
+		function run() {
+			var network = new Network();
+			network.addInput("input", 0.5);
+			network.addHidden("hidden");
+			network.addOutput("output");
+			network.addConnection("input", "hidden");
+			network.addConnection("hidden", "output");
+			network.calculate();
+			alert(network.getNode("output").value);
+		}
+		document.getElementById("p").innerHTML = run();
+	</script>
+</body>
+</html>
