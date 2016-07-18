@@ -4,21 +4,51 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="network.js"></script>
+<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+	}
 
+	td, th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	tr:nth-child(even) {
+		background-color: #dddddd;
+	}
+</style>
 <body>
-	<p id="p"></p>
+	<p id="backpropagation"></p>
+
 	<script>	
-		function run() {
-			var network = new Network();
-			network.addInput("input", 0.5);
-			network.addHidden("hidden");
-			network.addOutput("output");
-			network.addConnection("input", "hidden");
-			network.addConnection("hidden", "output");
-			network.calculate();
-			return network.getNode("output").value;
+		function backpropTestCase() {
+			var network = new BackpropNetwork({				
+				inputNodes: 2,
+				hiddenNodes: 3,
+				outputNodes: 1,
+				createAllConnections: true,
+				inputData: [[1, 0], [0, 1], [0, 0], [1, 1]],
+				targetData: [[1], [1], [0], [0]],
+				learningRate: 0.5
+			});
+			for (var i = 1; i <= 10000; i++) {
+				network.backpropagate();
+			}
+			var results = "<table><caption><h3>XOR Test Case, Iterated " + (i - 1) + " times</h3></caption><th>Input One</th><th>Input Two</th><th>Output</th><th>Error</th>";
+			for (var j = 0; j < 4; j++) {
+				network.iteration = j - 1;
+				network.backpropagate();
+				results += "<tr><td>" + network.getNode("INPUT", 0).value + "</td><td>" + network.getNode("INPUT", 1).value + "</td><td>" + network.getNode("OUTPUT", 0).value + "</td><td>" + network.getTotalError() + "</td></tr>";
+			}
+			results += "</table></br><i>Average Error: " + network.averageError[network.averageError.length - 1] + "</i>";
+			return results;
 		}
-		document.getElementById("p").innerHTML = run();
+
+		document.getElementById("backpropagation").innerHTML = backpropTestCase();
 	</script>
 </body>
 </html>
