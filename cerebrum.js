@@ -249,7 +249,7 @@ function Network(config) {
  	this.inputData = {};
  	this.targetData = {};
  	this.learningRate = 0.5;
- 	this.iteration = 0;
+ 	this.step = 0;
  	this.totalErrorSum = 0;
  	this.averageError = [];
 
@@ -267,84 +267,20 @@ function Network(config) {
  }
 
 /**
- * Adds a target result to the target data. This will be compared to the output in order to determine error.
- * @param {String} outputNodeID The ID of the output node whose value will be compared to the target.
- * @param {Number} target The value to compare against the output when checking for errors.
- */
- BackpropNetwork.prototype.addTarget = function (outputNodeID, target) {
- 	this.targetData[outputNodeID] = target;
- };
-
-/**
- * Sets the input data that will be compared to the target data.
- * @param {Array} An array containing the data to be inputted (ex. [0, 1] will set the first input node
- * to have a value of 0 and the second to have a value of 1). Each array argument represents a single
- * iteration, and will be compared against the parallel set in the target data.
- */
- BackpropNetwork.prototype.setInputData = function () {
- 	var all = arguments;
- 	if (arguments.length == 1 && arguments[0].constructor == Array) {
- 		all = arguments[0];
- 	} 
- 	this.inputData = {};
- 	for (var i = 0; i < all.length; i++) {
- 		var data = all[i];
- 		var instance = {};
- 		for (var j = 0; j < data.length; j++) {
- 			instance["INPUT:" + j] = data[j]; 
- 		}
- 		this.inputData[i] = instance;
- 	}
- };
-
-/**
- * Sets the target data that will be used to check for total error.
- * @param {Array} An array containing the data to be compared against (ex. [0, 1] will compare the first
- * output node against 0 and the second against 1). Each array argument represents a single iteration.
- */
- BackpropNetwork.prototype.setTargetData = function () {
- 	var all = arguments;
- 	if (arguments.length == 1 && arguments[0].constructor == Array) {
- 		all = arguments[0];
- 	} 
- 	this.targetData = {};
- 	for (var i = 0; i < all.length; i++) {
- 		var data = all[i];
- 		var instance = {};
- 		for (var j = 0; j < data.length; j++) {
- 			instance["OUTPUT:" + j] = data[j]; 
- 		}
- 		this.targetData[i] = instance;
- 	}
- };
-
-/**
- * Calculates the total error of all the outputs' values compared to the target data.
- * @return {Number} The total error.
- */
- BackpropNetwork.prototype.getTotalError = function () {
- 	var sum = 0;
- 	for (var i = 0; i < this.outputs.length; i++) {
- 		sum += Math.pow(this.targetData[this.iteration][this.outputs[i]] - this.nodes[this.outputs[i]].value, 2) / 2;
- 	}
- 	return sum;
- };
-
-/**
  * Backpropagates the neural network, using the input and training data given.
  */
  BackpropNetwork.prototype.backpropagate = function () {
- 	this.iteration++;
- 	if (this.inputData[this.iteration] === undefined) {
- 		this.averageError.push(this.totalErrorSum / this.iteration);
+ 	this.step++;
+ 	if (this.inputData[this.step] === undefined) {
+ 		this.averageError.push(this.totalErrorSum / this.step);
  		this.totalErrorSum = 0;
- 		this.iteration = 0;
+ 		this.step = 0;
  	}
- 	for (var inputKey in this.inputData[this.iteration]) {
- 		this.nodes[inputKey].value = this.inputData[this.iteration][inputKey];
+ 	for (var inputKey in this.inputData[this.step]) {
+ 		this.nodes[inputKey].value = this.inputData[this.step][inputKey];
  	}
  	this.calculate();
- 	var currentTargetData = this.targetData[this.iteration];
+ 	var currentTargetData = this.targetData[this.step];
  	var totalError = this.getTotalError();
  	this.totalErrorSum += totalError;
  	var newWeights = {};
@@ -378,19 +314,69 @@ function Network(config) {
  };
 
 /**
- * Neural network that is created and optimized via neuroevolution.
- * @type {Network}
+ * Adds a target result to the target data. This will be compared to the output in order to determine error.
+ * @param {String} outputNodeID The ID of the output node whose value will be compared to the target.
+ * @param {Number} target The value to compare against the output when checking for errors.
  */
- EvolutionaryNetwork.prototype = new Network();
- EvolutionaryNetwork.prototype.constructor = EvolutionaryNetwork;
+ BackpropNetwork.prototype.addTarget = function (outputNodeID, target) {
+ 	this.targetData[outputNodeID] = target;
+ };
 
- function EvolutionaryNetwork(config) {
- 	Network.call(this, config);
-
- 	if (config !== undefined) {
+/**
+ * Sets the input data that will be compared to the target data.
+ * @param {Array} An array containing the data to be inputted (ex. [0, 1] will set the first input node
+ * to have a value of 0 and the second to have a value of 1). Each array argument represents a single
+ * step, and will be compared against the parallel set in the target data.
+ */
+ BackpropNetwork.prototype.setInputData = function () {
+ 	var all = arguments;
+ 	if (arguments.length == 1 && arguments[0].constructor == Array) {
+ 		all = arguments[0];
+ 	} 
+ 	this.inputData = {};
+ 	for (var i = 0; i < all.length; i++) {
+ 		var data = all[i];
+ 		var instance = {};
+ 		for (var j = 0; j < data.length; j++) {
+ 			instance["INPUT:" + j] = data[j]; 
+ 		}
+ 		this.inputData[i] = instance;
  	}
- }
+ };
 
+/**
+ * Sets the target data that will be used to check for total error.
+ * @param {Array} An array containing the data to be compared against (ex. [0, 1] will compare the first
+ * output node against 0 and the second against 1). Each array argument represents a single step.
+ */
+ BackpropNetwork.prototype.setTargetData = function () {
+ 	var all = arguments;
+ 	if (arguments.length == 1 && arguments[0].constructor == Array) {
+ 		all = arguments[0];
+ 	} 
+ 	this.targetData = {};
+ 	for (var i = 0; i < all.length; i++) {
+ 		var data = all[i];
+ 		var instance = {};
+ 		for (var j = 0; j < data.length; j++) {
+ 			instance["OUTPUT:" + j] = data[j]; 
+ 		}
+ 		this.targetData[i] = instance;
+ 	}
+ };
+
+/**
+ * Calculates the total error of all the outputs' values compared to the target data.
+ * @return {Number} The total error.
+ */
+ BackpropNetwork.prototype.getTotalError = function () {
+ 	var sum = 0;
+ 	for (var i = 0; i < this.outputs.length; i++) {
+ 		sum += Math.pow(this.targetData[this.step][this.outputs[i]] - this.nodes[this.outputs[i]].value, 2) / 2;
+ 	}
+ 	return sum;
+ };
+ 
 
 //Private static functions
 function sigmoid(t) {
