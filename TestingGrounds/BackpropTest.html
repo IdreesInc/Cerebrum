@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-<title>Test Cases</title>
+<title>Backpropagation Test</title>
 
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="network.js"></script>
+<script src="../cerebrum.js"></script>
 <style>
 	table {
 		font-family: arial, sans-serif;
@@ -22,11 +23,17 @@
 	}
 </style>
 <body>
-	<p id="backpropagation"></p>
+	<center>
+		<div id="backpropagation"></div>
+		<div id="curve_chart" style="height: 500px"></div>
+	</center>
 
 	<script>	
+		var network;
+
+		//Backpropation 
 		function backpropTestCase() {
-			var network = new BackpropNetwork({				
+			network = new BackpropNetwork({				
 				inputNodes: 2,
 				hiddenNodes: 3,
 				outputNodes: 1,
@@ -35,7 +42,7 @@
 				targetData: [[1], [1], [0], [0]],
 				learningRate: 0.5
 			});
-			for (var i = 1; i <= 10000; i++) {
+			for (var i = 1; i <= 5000; i++) {
 				network.backpropagate();
 			}
 			var results = "<table><caption><h3>XOR Test Case, Iterated " + (i - 1) + " times</h3></caption><th>Input One</th><th>Input Two</th><th>Output</th><th>Error</th>";
@@ -49,6 +56,35 @@
 		}
 
 		document.getElementById("backpropagation").innerHTML = backpropTestCase();
+
+		//Google charts visualization of the average error over time
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawChart);
+
+		function drawChart() {
+			var dataArray = [['Iteration', 'Avg. Error']];
+			for (var i = 0; i < network.averageError.length; i++) {
+				dataArray.push([i * 4, network.averageError[i]]);
+			}
+			console.log(dataArray);
+			var data = google.visualization.arrayToDataTable(dataArray);
+
+			var options = {
+				title: 'Average Error over Time',
+				legend: { position: 'bottom' },
+				hAxis: {
+					title: 'Iteration (with each iteration testing a single test case seperately)'
+				},
+				vAxis: {
+					title: 'Average Error of All Output Nodes'
+				},
+				lineWidth: 3,
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+			chart.draw(data, options);
+		}
 	</script>
 </body>
 </html>

@@ -377,6 +377,21 @@ function Network(config) {
  	}
  };
 
+/**
+ * Neural network that is created and optimized via neuroevolution.
+ * @type {Network}
+ */
+ EvolutionaryNetwork.prototype = new Network();
+ EvolutionaryNetwork.prototype.constructor = EvolutionaryNetwork;
+
+ function EvolutionaryNetwork(config) {
+ 	Network.call(this, config);
+
+ 	if (config !== undefined) {
+ 	}
+ }
+
+
 //Private static functions
 function sigmoid(t) {
 	return 1 / (1 + Math.exp(-t));
