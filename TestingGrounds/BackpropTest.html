@@ -25,7 +25,8 @@
 <body>
 	<center>
 		<div id="backpropagation"></div>
-		<div id="curve_chart" style="height: 500px"></div>
+		<canvas id="NetworkVisualizer" height="400px" width= "600px" style="float: left"></canvas>
+		<div id="curve_chart" style="height: 400px; width: 600px; float: right"></div>
 	</center>
 
 	<script>	
@@ -44,6 +45,9 @@
 			});
 			while (network.averageError.length < 1 || network.averageError[network.averageError.length - 1] > 0.003) {
 				network.backpropagate();
+				if (network.averageError.length > 10000) {
+					break;
+				}
 			}
 			var results = "<table><caption><h3>XOR Test Case, Iterated " + network.averageError.length + " times</h3></caption><th>Input One</th><th>Input Two</th><th>Output</th><th>Error</th>";
 			for (var j = 0; j < 4; j++) {
@@ -52,6 +56,10 @@
 				results += "<tr><td>" + network.getNode("INPUT", 0).value + "</td><td>" + network.getNode("INPUT", 1).value + "</td><td>" + network.getNode("OUTPUT", 0).value + "</td><td>" + network.getTotalError() + "</td></tr>";
 			}
 			results += "</table></br><i>Average Error: " + network.averageError[network.averageError.length - 1] + "</i>";
+
+			var vis = new NetworkVisualizer();
+			vis.drawNetwork(network)
+
 			return results;
 		}
 
@@ -66,7 +74,6 @@
 			for (var i = 0; i < network.averageError.length; i++) {
 				dataArray.push([i, network.averageError[i]]);
 			}
-			console.log(dataArray);
 			var data = google.visualization.arrayToDataTable(dataArray);
 
 			var options = {

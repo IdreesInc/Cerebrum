@@ -238,6 +238,102 @@ function Network(config) {
  };
 
 /**
+ * Used to visualize a neural network.
+ * @param {[type]} config [description]
+ */
+ function NetworkVisualizer(config) {
+ 	this.canvas = "NetworkVisualizer";
+ 	this.backgroundColor = "#FFFFFF";
+ 	this.nodeRadius = -1;
+ 	this.nodeColor = "grey";
+ 	this.positiveConnectionColor = "green";
+ 	this.negativeConnectionColor = "red";
+ 	this.connectionStrokeModifier = 1;
+ 	if (config !== undefined) {
+ 		if (config.canvas !== undefined) {
+ 			this.canvas = config.canvas;
+ 		}
+ 		if (config.backgroundColor !== undefined) {
+ 			this.backgroundColor = config.backgroundColor;
+ 		}
+ 		if (config.nodeRadius !== undefined) {
+ 			this.nodeRadius = config.nodeRadius;
+ 		}
+ 		if (config.nodeColor !== undefined) {
+ 			this.nodeColor = config.nodeColor;
+ 		}
+ 		if (config.positiveConnectionColor !== undefined) {
+ 			this.positiveConnectionColor = config.positiveConnectionColor;
+ 		}
+ 		if (config.negativeConnectionColor !== undefined) {
+ 			this.negativeConnectionColor = config.negativeConnectionColor;
+ 		}
+ 		if (config.connectionStrokeModifier !== undefined) {
+ 			this.connectionStrokeModifier = config.connectionStrokeModifier;
+ 		}
+ 	}
+ }
+
+/**
+ * Draws the visualized network upon the canvas.
+ * @param  {Network} network The network to visualize.
+ */
+ NetworkVisualizer.prototype.drawNetwork = function (network) {
+ 	var canv = document.getElementById(this.canvas); 
+ 	var ctx = canv.getContext("2d");
+ 	var radius;
+ 	ctx.fillStyle = this.backgroundColor;
+ 	ctx.fillRect(0, 0, canv.width, canv.height);
+ 	if (this.nodeRadius != -1) {
+ 		radius = this.nodeRadius;
+ 	} else {
+ 		radius = Math.min(canv.width, canv.height) / (Math.max(network.inputs.length, network.hidden.length, network.outputs.length)) / 2.5;
+ 	}
+ 	var nodeLocations = {};
+ 	var inputX = canv.width / 5;
+ 	for (var inputIndex = 0; inputIndex < network.inputs.length; inputIndex++) {
+ 		nodeLocations[network.inputs[inputIndex]] = {x: inputX, y: canv.height / (network.inputs.length) * (inputIndex + 0.5)};
+ 	}
+ 	var hiddenX = canv.width / 2;
+ 	for (var hiddenIndex = 0; hiddenIndex < network.hidden.length; hiddenIndex++) {
+ 		nodeLocations[network.hidden[hiddenIndex]] = {x: hiddenX, y: canv.height / (network.hidden.length) * (hiddenIndex + 0.5)};
+ 	}
+ 	var outputX = canv.width / 5 * 4;
+ 	for (var outputIndex = 0; outputIndex < network.outputs.length; outputIndex++) {
+ 		nodeLocations[network.outputs[outputIndex]] = {x: outputX, y: canv.height / (network.outputs.length) * (outputIndex + 0.5)};
+ 	}
+ 	for (var connectionKey in network.connections) {
+ 		var connection = network.connections[connectionKey];
+ 		if (connection.in != "BIAS" && connection.out != "BIAS") {
+ 			ctx.beginPath();
+ 			ctx.moveTo(nodeLocations[connection.in].x, nodeLocations[connection.in].y);
+ 			ctx.lineTo(nodeLocations[connection.out].x, nodeLocations[connection.out].y);
+ 			if (connection.weight > 0) {
+ 				ctx.strokeStyle = this.positiveConnectionColor;
+ 			} else {
+ 				ctx.strokeStyle = this.negativeConnectionColor;
+ 			}
+ 			ctx.lineWidth = connection.weight * this.connectionStrokeModifier;
+ 			ctx.lineCap = "round";
+ 			ctx.stroke();
+ 		}
+ 	}
+ 	for (var nodeKey in nodeLocations) {
+ 		var node = network.getNodeByID(nodeKey);
+ 		ctx.beginPath();
+ 		ctx.arc(nodeLocations[nodeKey].x, nodeLocations[nodeKey].y, radius, 0, 2 * Math.PI);
+ 		ctx.fillStyle = this.backgroundColor;
+ 		ctx.fill();
+ 		ctx.strokeStyle = this.nodeColor;
+ 		ctx.lineWidth = 3;
+ 		ctx.stroke();
+ 		ctx.globalAlpha = node.value;
+ 		ctx.fillStyle = this.nodeColor;
+ 		ctx.fill();
+ 		ctx.globalAlpha = 1; 	}
+ 	};
+
+/**
  * Neural network that is optimized via backpropagation.
  * @type {Network}
  */
@@ -376,7 +472,7 @@ function Network(config) {
  	}
  	return sum;
  };
- 
+
 
 //Private static functions
 function sigmoid(t) {
