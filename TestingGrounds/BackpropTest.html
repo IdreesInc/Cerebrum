@@ -24,15 +24,14 @@
 </style>
 <body>
 	<center>
-		<div id="backpropagation"></div>
+		<div id="networkData"></div>
 		<canvas id="NetworkVisualizer" height="400px" width= "600px" style="float: left"></canvas>
 		<div id="curve_chart" style="height: 400px; width: 600px; float: right"></div>
 	</center>
 
-	<script>	
+	<script type="text/javascript">	
 		var network;
 
-		//Backpropation 
 		function backpropTestCase() {
 			network = new BackpropNetwork({				
 				inputNodes: 2,
@@ -57,13 +56,13 @@
 			}
 			results += "</table></br><i>Average Error: " + network.averageError[network.averageError.length - 1] + "</i>";
 
-			var vis = new NetworkVisualizer();
-			vis.drawNetwork(network)
+			var visualizer = new NetworkVisualizer();
+			visualizer.drawNetwork(network);
 
 			return results;
 		}
 
-		document.getElementById("backpropagation").innerHTML = backpropTestCase();
+		document.getElementById("networkData").innerHTML = backpropTestCase();
 
 		//Google charts visualization of the average error over time
 		google.charts.load('current', {'packages':['corechart']});

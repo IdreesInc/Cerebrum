@@ -1,5 +1,4 @@
-
-var Node = function (ID, val) {
+var Node = function(ID, val) {
 	this.id = ID;
 	this.incomingConnections = [];
 	this.outgoingConnections = [];
@@ -10,7 +9,7 @@ var Node = function (ID, val) {
 	this.bias = 0;
 };
 
-var Connection = function (inID, outID, weight) {
+var Connection = function(inID, outID, weight) {
 	this.in = inID;
 	this.out = outID;
 	if (weight === undefined) {
@@ -46,7 +45,7 @@ function Network(config) {
  * @param  {Number} hiddenNum The number of hidden nodes to create.
  * @param  {Number} outputNum The number of output nodes to create.
  */
- Network.prototype.createNodes = function (inputNum, hiddenNum, outputNum) {
+ Network.prototype.createNodes = function(inputNum, hiddenNum, outputNum) {
  	for (var i = 0; i < inputNum; i++) {
  		this.addInput();
  	}
@@ -61,7 +60,7 @@ function Network(config) {
 /**
  * @param {Number} [value] The value to set the node to [Default is 0].
  */
- Network.prototype.addInput = function (value) {
+ Network.prototype.addInput = function(value) {
  	var nodeID = "INPUT:" + this.inputs.length;
  	if (value === undefined) {
  		value = 0;
@@ -73,7 +72,7 @@ function Network(config) {
 /**
  * Creates a hidden node.
  */
- Network.prototype.addHidden = function () {
+ Network.prototype.addHidden = function() {
  	var nodeID = "HIDDEN:" + this.hidden.length;
  	this.nodes[nodeID] = new Node(nodeID);
  	this.hidden.push(nodeID);
@@ -82,7 +81,7 @@ function Network(config) {
 /**
  * Creates an output node.
  */
- Network.prototype.addOutput = function () {
+ Network.prototype.addOutput = function() {
  	var nodeID = "OUTPUT:" + this.outputs.length;
  	this.nodes[nodeID] = new Node(nodeID);
  	this.outputs.push(nodeID);
@@ -92,7 +91,7 @@ function Network(config) {
  * @param  {String} nodeID The ID of the node to return.
  * @return {Node} The node with the given ID.
  */
- Network.prototype.getNodeByID = function (nodeID) {
+ Network.prototype.getNodeByID = function(nodeID) {
  	return this.nodes[nodeID];
  };
 
@@ -102,7 +101,7 @@ function Network(config) {
  * @param  {Number} index The index of the node (from the array containing nodes of the requested type).
  * @return {Node} The node requested. Will return null if no node is found.
  */
- Network.prototype.getNode = function (type, index) {
+ Network.prototype.getNode = function(type, index) {
  	if (type.toUpperCase() == "INPUT") {
  		return this.nodes[this.inputs[index]];
  	} else 	if (type.toUpperCase() == "HIDDEN") {
@@ -117,7 +116,7 @@ function Network(config) {
  * @param  {String} connectionID The ID of the connection to return.
  * @return {Connection} The connection with the given ID.
  */
- Network.prototype.getConnection = function (connectionID) {
+ Network.prototype.getConnection = function(connectionID) {
  	return this.connections[connectionID];
  };
 
@@ -137,7 +136,7 @@ function Network(config) {
 /**
  * Updates the node's to reference the current connections.
  */
- Network.prototype.updateNodeConnections = function () {
+ Network.prototype.updateNodeConnections = function() {
  	for (var nodeKey in this.nodes) {
  		this.nodes[nodeKey].incomingConnections = [];
  		this.nodes[nodeKey].outgoingConnections = [];
@@ -152,7 +151,7 @@ function Network(config) {
  * Calculates and updates the value of the node with the given ID.
  * @param  {String} nodeId The ID of the node to update.
  */
- Network.prototype.calculateNodeValue = function (nodeID) {
+ Network.prototype.calculateNodeValue = function(nodeID) {
  	var sum = 0;
  	for (var incomingIndex = 0; incomingIndex < this.nodes[nodeID].incomingConnections.length; incomingIndex++) {
  		var connection = this.connections[this.nodes[nodeID].incomingConnections[incomingIndex]];
@@ -167,7 +166,7 @@ function Network(config) {
  * @param {String} outID The ID of the node that the connection enters.
  * @param {Number} [weight] The weight of the connection [Default is 1].
  */
- Network.prototype.addConnection = function (inID, outID, weight) {
+ Network.prototype.addConnection = function(inID, outID, weight) {
  	if (weight === undefined) {
  		weight = 1;
  	}
@@ -178,7 +177,7 @@ function Network(config) {
  * Creates all possible connections between nodes, including connections to the bias node.
  * @param  {Boolean} randomWeights Whether to choose a random weight between -1 and 1, or to default to 1.
  */
- Network.prototype.createAllConnections = function (randomWeights) {
+ Network.prototype.createAllConnections = function(randomWeights) {
  	if (randomWeights === undefined) {
  		randomWeights = false;
  	}
@@ -216,7 +215,7 @@ function Network(config) {
  * @param {String} nodeID The ID of the node to modify.
  * @param {Number} value The value to set the node to.
  */
- Network.prototype.setNodeValue = function (nodeID, value) {
+ Network.prototype.setNodeValue = function(nodeID, value) {
  	this.nodes[nodeID].value = value;
  };
 
@@ -231,15 +230,15 @@ function Network(config) {
  * Sets the value of multiple nodes, given an object with node ID's as parameters and node values as values.
  * @param {Object} The values to set the nodes to.
  */
- Network.prototype.setMultipleNodeValues = function (valuesByID) {
+ Network.prototype.setMultipleNodeValues = function(valuesByID) {
  	for (var key in valuesByID) {
  		this.nodes[key].value = valuesByID[key];
  	}
  };
 
+
 /**
  * Used to visualize a neural network.
- * @param {[type]} config [description]
  */
  function NetworkVisualizer(config) {
  	this.canvas = "NetworkVisualizer";
@@ -278,7 +277,7 @@ function Network(config) {
  * Draws the visualized network upon the canvas.
  * @param  {Network} network The network to visualize.
  */
- NetworkVisualizer.prototype.drawNetwork = function (network) {
+ NetworkVisualizer.prototype.drawNetwork = function(network) {
  	var canv = document.getElementById(this.canvas); 
  	var ctx = canv.getContext("2d");
  	var radius;
@@ -333,6 +332,7 @@ function Network(config) {
  		ctx.globalAlpha = 1; 	}
  	};
 
+
 /**
  * Neural network that is optimized via backpropagation.
  * @type {Network}
@@ -365,7 +365,7 @@ function Network(config) {
 /**
  * Backpropagates the neural network, using the input and training data given.
  */
- BackpropNetwork.prototype.backpropagate = function () {
+ BackpropNetwork.prototype.backpropagate = function() {
  	this.step++;
  	if (this.inputData[this.step] === undefined) {
  		this.averageError.push(this.totalErrorSum / this.step);
@@ -414,7 +414,7 @@ function Network(config) {
  * @param {String} outputNodeID The ID of the output node whose value will be compared to the target.
  * @param {Number} target The value to compare against the output when checking for errors.
  */
- BackpropNetwork.prototype.addTarget = function (outputNodeID, target) {
+ BackpropNetwork.prototype.addTarget = function(outputNodeID, target) {
  	this.targetData[outputNodeID] = target;
  };
 
@@ -424,7 +424,7 @@ function Network(config) {
  * to have a value of 0 and the second to have a value of 1). Each array argument represents a single
  * step, and will be compared against the parallel set in the target data.
  */
- BackpropNetwork.prototype.setInputData = function () {
+ BackpropNetwork.prototype.setInputData = function() {
  	var all = arguments;
  	if (arguments.length == 1 && arguments[0].constructor == Array) {
  		all = arguments[0];
@@ -445,7 +445,7 @@ function Network(config) {
  * @param {Array} An array containing the data to be compared against (ex. [0, 1] will compare the first
  * output node against 0 and the second against 1). Each array argument represents a single step.
  */
- BackpropNetwork.prototype.setTargetData = function () {
+ BackpropNetwork.prototype.setTargetData = function() {
  	var all = arguments;
  	if (arguments.length == 1 && arguments[0].constructor == Array) {
  		all = arguments[0];
@@ -465,7 +465,7 @@ function Network(config) {
  * Calculates the total error of all the outputs' values compared to the target data.
  * @return {Number} The total error.
  */
- BackpropNetwork.prototype.getTotalError = function () {
+ BackpropNetwork.prototype.getTotalError = function() {
  	var sum = 0;
  	for (var i = 0; i < this.outputs.length; i++) {
  		sum += Math.pow(this.targetData[this.step][this.outputs[i]] - this.nodes[this.outputs[i]].value, 2) / 2;
@@ -473,10 +473,227 @@ function Network(config) {
  	return sum;
  };
 
+ function Gene(inID, outID, weight, innovation) {
+ 	if (innovation === undefined) {
+ 		innovation = 0;
+ 	}
+ 	this.innovation = innovation;
+ 	this.in = inID;
+ 	this.out = outID;
+ 	if (weight === undefined) {
+ 		weight = 1;
+ 	}
+ 	this.weight = weight;
+ 	this.enabled = true;
+ }
+
+/**
+ * Returns the connection that the gene represents.
+ * @return {Connection} The generated connection.
+ */
+ Gene.prototype.getConnection = function() {
+ 	return new Connection(this.in, this.out, this.weight);
+ };
+
+ function Genome(inputNodes, outputNodes) {
+ 	this.inputNodes = inputNodes;
+ 	this.outputNodes = outputNodes;
+ 	this.genes = [];
+ 	this.fitness = -1;
+ }
+
+/**
+ * Returns the network that the genome represents.
+ * @return {Network} The generated network.
+ */
+ Genome.prototype.getNetwork = function() {
+ 	var network = new Network();
+ 	network.createNodes(this.inputNodes, 0, this.outputNodes);
+ 	for (var i = 0; i < this.genes.length; i++) {
+ 		var gene = this.genes[i];
+ 		if (gene.enabled) {
+ 			if (network.nodes[gene.in] === undefined) {
+ 				if (gene.in.indexOf("HIDDEN") != -1) {
+ 					network.nodes[gene.in] = new Node(gene.in);
+ 					network.hidden.push(gene.in);
+ 				}
+ 				if (gene.out.indexOf("HIDDEN") != -1) {
+ 					network.nodes[gene.out] = new Node(gene.out);
+ 					network.hidden.push(gene.out);
+ 				}
+ 			}
+ 			network.addConnection(gene.in, gene.out, gene.weight);
+ 		}
+ 	}
+ 	return network;
+ };
+
+/**
+ * Creates and optimizes neural networks via neuroevolution.
+ */
+ function Neuroevolution(config) {
+ 	this.genomes = [];
+ 	this.populationSize = 100;
+ 	this.mutationRates = {
+ 		createConnection: 0.05,
+ 		createNode: 0.05,
+ 		modifyWeight: 0.15,
+ 		enableGene: 0.05,
+ 		disableGene: 0.1,
+ 		createBias: 0.1,
+ 		weightMutationStep: 2
+ 	};
+ 	this.inputNodes = 0;
+ 	this.outputNodes = 0;
+ 	this.globalInnovationCounter = 1;
+ 	if (config !== undefined) {
+ 		if (config.populationSize !== undefined) {
+ 			this.populationSize = config.populationSize;
+ 		}
+ 		if (config.inputNodes !== undefined) {
+ 			this.inputNodes = config.inputNodes;
+ 		}
+ 		if (config.outputNodes !== undefined) {
+ 			this.outputNodes = config.outputNodes;
+ 		}
+ 		if (config.mutationRates !== undefined) {
+ 			var configRates = config.mutationRates;
+ 			if (configRates.createConnection !== undefined) {
+ 				this.mutationRates.createConnection = configRates.createConnection;
+ 			}
+ 			if (configRates.createNode !== undefined) {
+ 				this.mutationRates.createNode = configRates.createNode;
+ 			}
+ 			if (configRates.modifyWeight !== undefined) {
+ 				this.mutationRates.modifyWeight = configRates.modifyWeight;
+ 			}
+ 			if (configRates.enableGene !== undefined) {
+ 				this.mutationRates.enableGene = configRates.enableGene;
+ 			}
+ 			if (configRates.disableGene !== undefined) {
+ 				this.mutationRates.disableGene = configRates.disableGene;
+ 			}
+ 			if (configRates.createBias !== undefined) {
+ 				this.mutationRates.createBias = configRates.createBias;
+ 			}
+ 			if (configRates.weightMutationStep !== undefined) {
+ 				this.mutationRates.weightMutationStep = configRates.weightMutationStep;
+ 			}
+ 		}
+ 	}
+ }
+
+/**
+ * Populates the population with empty genomes, and then mutates the genomes.
+ * @param  {Number} populationSize The size of the population to create.
+ */
+ Neuroevolution.prototype.createInitialPopulation = function() {
+ 	this.genomes = [];
+ 	for (var i = 0; i < this.populationSize; i++) {
+ 		var genome = new Genome(this.inputNodes, this.outputNodes);
+ 		this.genomes.push(genome);
+ 	}
+ 	this.mutate();
+ };
+
+/**
+ * Mutates the entire population based on the mutation rates.
+ */
+ Neuroevolution.prototype.mutate = function() {
+ 	var newInnovations = {};
+ 	for (var i = 0; i < this.genomes.length; i++) {
+ 		var network = this.genomes[i].getNetwork();
+ 		if (Math.random() < this.mutationRates.createConnection) {
+ 			var inNode = "";
+ 			var outNode = "";
+ 			if (Math.random() < 1/3 || network.hidden.length <= 0) {
+ 				inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
+ 				outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
+ 			} else if (Math.random() < 2/3) {
+ 				inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
+ 				outNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
+ 			} else {
+ 				inNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
+ 				outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
+ 			}
+ 			if (network.connections[inNode + ":" + outNode] === undefined) {
+ 				var newGene = new Gene(inNode, outNode, Math.random() * 2 - 1);
+ 				if (newInnovations[newGene.in + ":" + newGene.out] === undefined) {
+ 					newInnovations[newGene.in + ":" + newGene.out] = this.globalInnovationCounter;
+ 					newGene.innovation = this.globalInnovationCounter;
+ 					this.globalInnovationCounter++;
+ 				} else {
+ 					newGene.innovation = newInnovations[newGene.in + ":" + newGene.out];
+ 				}
+ 				this.genomes[i].genes.push(newGene);
+ 			}
+ 		}
+ 		if (Math.random() < this.mutationRates.createNode && this.genomes[i].genes.length > 0) {
+ 			var geneIndex = randomNumBetween(0, this.genomes[i].genes.length - 1);
+ 			var gene = this.genomes[i].genes[geneIndex];
+ 			if (gene.enabled && gene.in.indexOf("INPUT") != -1 && gene.out.indexOf("OUTPUT") != -1) {
+ 				var newNum = -1;
+ 				var found = true;
+ 				while (found) {
+ 					newNum++;
+ 					found = false;
+ 					for (var j = 0; j < this.genomes[i].genes.length; j++) {
+ 						if (this.genomes[i].genes[j].in.indexOf("HIDDEN:" + newNum) != -1 || this.genomes[i].genes[j].out.indexOf("HIDDEN:" + newNum) != -1) {
+ 							found = true;
+ 						}
+ 					}
+ 				}
+ 				var nodeName = "HIDDEN:" + newNum;
+ 				this.genomes[i].genes[geneIndex].enabled = false;
+ 				this.genomes[i].genes.push(new Gene(gene.in, nodeName, 1, this.globalInnovationCounter));
+ 				this.globalInnovationCounter++;
+ 				this.genomes[i].genes.push(new Gene(nodeName, gene.out, gene.weight, this.globalInnovationCounter));
+ 				this.globalInnovationCounter++;
+ 			}
+ 		}
+ 		for (var inputIndex = 0; inputIndex < network.inputs; inputIndex++) {
+ 			if (Math.random() < this.mutationRates.createBias) {
+ 				this.genomes[i].genes.push(new Gene("BIAS", network.inputs[inputIndex]));
+ 			}
+ 		}
+ 		for (var hiddenIndex = 0; hiddenIndex < network.hidden; hiddenIndex++) {
+ 			if (Math.random() < this.mutationRates.createBias) {
+ 				this.genomes[i].genes.push(new Gene("BIAS", network.hidden[inputIndex]));
+ 			}
+ 		}
+ 		for (var k = 0; k < this.genomes[i].genes.length; k++) {
+ 			this.genomes[i].genes[k] = this.pointMutate(this.genomes[i].genes[k]);
+ 		}
+
+ 	}
+ };
+
+/**
+ * Mutates the given gene based on the mutation rates.
+ * @param  {Gene} The gene to mutate.
+ * @return {Gene} The mutated gene.
+ */
+ Neuroevolution.prototype.pointMutate = function(gene) {
+ 	if (Math.random() < this.mutationRates.modifyWeight) {
+ 		gene.weight = gene.weight + Math.random() * this.mutationRates.weightMutationStep * 2 - this.mutationRates.weightMutationStep; 
+ 	}
+ 	if (Math.random() < this.mutationRates.enableGene) {
+ 		gene.enabled = true;
+ 	}
+ 	if (Math.random() < this.mutationRates.disableGene) {
+ 		gene.enabled = false;
+ 	}
+ 	return gene;
+ };
+
 
 //Private static functions
 function sigmoid(t) {
 	return 1 / (1 + Math.exp(-t));
+}
+
+function randomNumBetween(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function log(text) {

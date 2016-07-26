@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<title>Neuroevolution Test</title>
+
+<script src="../cerebrum.js"></script>
+<body>
+	<center>
+		<div id="networkData"></div>
+		<canvas id="NetworkVisualizer" height="400px" width= "1000px"></canvas>
+	</center>
+	<script type="text/javascript">
+		var neuroevolution;
+
+		function neuroevolutionTestCase() {
+			neuroevolution = new Neuroevolution({				
+				inputNodes: 2,
+				outputNodes: 1,
+			});
+			neuroevolution.createInitialPopulation();
+
+			var visualizer = new NetworkVisualizer();
+			var i = 0;
+			while (neuroevolution.genomes[i].getNetwork().hidden.length === 0 && i < neuroevolution.populationSize - 1) {
+				i++;
+			}
+			visualizer.drawNetwork(neuroevolution.genomes[i].getNetwork());
+			return JSON.stringify(neuroevolution.genomes[i].genes);
+		}
+
+		document.getElementById("networkData").innerHTML = neuroevolutionTestCase();
+	</script>
+</body>
+</html>
