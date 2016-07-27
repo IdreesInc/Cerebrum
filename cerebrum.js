@@ -1,43 +1,58 @@
-var Node = function(ID, val) {
-	this.id = ID;
-	this.incomingConnections = [];
-	this.outgoingConnections = [];
-	if (val === undefined) {
-		val = 0;
-	}
-	this.value = val;
-	this.bias = 0;
-};
+/**
+ * A node, representing a biological neuron.
+ * @param {Number} ID  The ID of the node.
+ * @param {Number} val The value of the node.
+ */
+ var Node = function(ID, val) {
+ 	this.id = ID;
+ 	this.incomingConnections = [];
+ 	this.outgoingConnections = [];
+ 	if (val === undefined) {
+ 		val = 0;
+ 	}
+ 	this.value = val;
+ 	this.bias = 0;
+ };
 
-var Connection = function(inID, outID, weight) {
-	this.in = inID;
-	this.out = outID;
-	if (weight === undefined) {
-		weight = 1;
-	}
-	this.id = inID + ":" + outID;
-	this.weight = weight;
-};
+/**
+ * A connection, representing a biological synapse.
+ * @param {String} inID   The ID of the incoming node.
+ * @param {String} outID  The ID of the outgoing node.
+ * @param {Number} weight The weight of the connection.
+ */
+ var Connection = function(inID, outID, weight) {
+ 	this.in = inID;
+ 	this.out = outID;
+ 	if (weight === undefined) {
+ 		weight = 1;
+ 	}
+ 	this.id = inID + ":" + outID;
+ 	this.weight = weight;
+ };
 
-function Network(config) {
-	this.nodes = {};
-	this.inputs = [];
-	this.hidden = [];
-	this.outputs = [];
-	this.connections = {};
-	this.nodes.BIAS = new Node("BIAS", 1);
+/**
+ * The neural network, containing nodes and connections.
+ * @param {Object} config The configuration to use.
+ */
+ function Network(config) {
+ 	this.nodes = {};
+ 	this.inputs = [];
+ 	this.hidden = [];
+ 	this.outputs = [];
+ 	this.connections = {};
+ 	this.nodes.BIAS = new Node("BIAS", 1);
 
-	if (config !== undefined) {
-		var inputNum = config.inputNodes || 0;
-		var hiddenNum = config.hiddenNodes || 0;
-		var outputNum = config.outputNodes || 0;
-		this.createNodes(inputNum, hiddenNum, outputNum);
+ 	if (config !== undefined) {
+ 		var inputNum = config.inputNodes || 0;
+ 		var hiddenNum = config.hiddenNodes || 0;
+ 		var outputNum = config.outputNodes || 0;
+ 		this.createNodes(inputNum, hiddenNum, outputNum);
 
-		if (config.createAllConnections) {
-			this.createAllConnections(true);
-		}
-	}
-}
+ 		if (config.createAllConnections) {
+ 			this.createAllConnections(true);
+ 		}
+ 	}
+ }
 
 /**
  * Populates the network with the given number of nodes of each type.
@@ -239,6 +254,7 @@ function Network(config) {
 
 /**
  * Used to visualize a neural network.
+ * @param {Object} config The configuration to use.
  */
  function NetworkVisualizer(config) {
  	this.canvas = "NetworkVisualizer";
@@ -333,13 +349,13 @@ function Network(config) {
  	};
 
 
+ 	BackpropNetwork.prototype = new Network();
+ 	BackpropNetwork.prototype.constructor = BackpropNetwork;
+
 /**
  * Neural network that is optimized via backpropagation.
- * @type {Network}
+ * @param {Object} config The configuration to use.
  */
- BackpropNetwork.prototype = new Network();
- BackpropNetwork.prototype.constructor = BackpropNetwork;
-
  function BackpropNetwork(config) {
  	Network.call(this, config);
  	this.inputData = {};
@@ -473,7 +489,15 @@ function Network(config) {
  	return sum;
  };
 
- function Gene(inID, outID, weight, innovation) {
+/**
+ * A gene containing the data for a single connection in the neural network.
+ * @param {String} inID       The ID of the incoming node.
+ * @param {String} outID      The ID of the outgoing node.
+ * @param {Number} weight     The weight of the connection to create.
+ * @param {Number} innovation The innovation number of the gene.
+ * @param {Boolean} enabled   Whether the gene is expressed or not.
+ */	
+ function Gene(inID, outID, weight, innovation, enabled) {
  	if (innovation === undefined) {
  		innovation = 0;
  	}
@@ -484,7 +508,10 @@ function Network(config) {
  		weight = 1;
  	}
  	this.weight = weight;
- 	this.enabled = true;
+ 	if (enabled === undefined) {
+ 		enabled = true;
+ 	}
+ 	this.enabled = enabled;
  }
 
 /**
@@ -495,6 +522,11 @@ function Network(config) {
  	return new Connection(this.in, this.out, this.weight);
  };
 
+/**
+ * A genome containing genes that will make up the neural network.
+ * @param {Number} inputNodes  The number of input nodes to create.
+ * @param {Number} outputNodes The number of output nodes to create.
+ */
  function Genome(inputNodes, outputNodes) {
  	this.inputNodes = inputNodes;
  	this.outputNodes = outputNodes;
@@ -512,15 +544,13 @@ function Network(config) {
  	for (var i = 0; i < this.genes.length; i++) {
  		var gene = this.genes[i];
  		if (gene.enabled) {
- 			if (network.nodes[gene.in] === undefined) {
- 				if (gene.in.indexOf("HIDDEN") != -1) {
- 					network.nodes[gene.in] = new Node(gene.in);
- 					network.hidden.push(gene.in);
- 				}
- 				if (gene.out.indexOf("HIDDEN") != -1) {
- 					network.nodes[gene.out] = new Node(gene.out);
- 					network.hidden.push(gene.out);
- 				}
+ 			if (network.nodes[gene.in] === undefined && gene.in.indexOf("HIDDEN") != -1) {
+ 				network.nodes[gene.in] = new Node(gene.in);
+ 				network.hidden.push(gene.in);
+ 			}
+ 			if (network.nodes[gene.out] === undefined && gene.out.indexOf("HIDDEN") != -1) {
+ 				network.nodes[gene.out] = new Node(gene.out);
+ 				network.hidden.push(gene.out);
  			}
  			network.addConnection(gene.in, gene.out, gene.weight);
  		}
@@ -530,6 +560,7 @@ function Network(config) {
 
 /**
  * Creates and optimizes neural networks via neuroevolution.
+ * @param {Object} config The configuration to use.
  */
  function Neuroevolution(config) {
  	this.genomes = [];
@@ -666,6 +697,44 @@ function Network(config) {
  		}
 
  	}
+ };
+
+/**
+ * Crosses two parent genomes with one another, forming a child genome.
+ * @param  {Genome} firstGenome  The first genome to mate.
+ * @param  {Genome} secondGenome The second genome to mate.
+ * @return {Genome} The resultant child genome.
+ */
+ Neuroevolution.prototype.crossover = function(firstGenome, secondGenome) {
+ 	var child = new Genome(firstGenome.inputNodes, firstGenome.outputNodes);
+ 	var firstInnovationNumbers = {};
+ 	for (var h = 0; h < firstGenome.genes.length; h++) {
+ 		firstInnovationNumbers[firstGenome.genes[h].innovation] = h;
+ 	}
+ 	var secondInnovationNumbers = {};
+ 	for (var j = 0; j < secondGenome.genes.length; j++) {
+ 		secondInnovationNumbers[secondGenome.genes[j].innovation] = j;
+ 	}
+ 	for (var i = 0; i < firstGenome.genes.length; i++) {
+ 		var geneToClone;
+ 		if (secondInnovationNumbers[firstGenome.genes[i].innovation] !== undefined) {
+ 			if (Math.random() < 0.5) {
+ 				geneToClone = firstGenome.genes[i];
+ 			} else {
+ 				geneToClone = secondGenome.genes[secondInnovationNumbers[firstGenome.genes[i].innovation]];
+ 			}
+ 		} else {
+ 			geneToClone = firstGenome.genes[i];
+ 		}
+ 		child.genes.push(new Gene(geneToClone.in, geneToClone.out, geneToClone.weight, geneToClone.innovation, geneToClone.enabled)); 		
+ 	}
+ 	for (var k = 0; k < secondGenome.genes.length; k++) {
+ 		if (firstInnovationNumbers[secondGenome.genes[k].innovation] === undefined) {
+ 			var secondDisjoint = secondGenome.genes[k];
+ 			child.genes.push(new Gene(secondDisjoint.in, secondDisjoint.out, secondDisjoint.weight, secondDisjoint.innovation, secondDisjoint.enabled)); 		
+ 		}
+ 	}
+ 	return child;
  };
 
 /**

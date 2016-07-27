@@ -15,16 +15,32 @@
 			neuroevolution = new Neuroevolution({				
 				inputNodes: 2,
 				outputNodes: 1,
+				mutationRates: {
+					createConnection: 1,
+					createNode: 1
+				}
 			});
 			neuroevolution.createInitialPopulation();
+			var mum = new Genome(1, 2);
+			mum.genes.push(new Gene("INPUT:0", "OUTPUT:0", 1, 1));
+			mum.genes.push(new Gene("INPUT:0", "OUTPUT:1", 1, 2));
+			mum.genes.push(new Gene("INPUT:0", "HIDDEN:0", 1, 3));
+			mum.genes.push(new Gene("HIDDEN:0", "OUTPUT:0", 1, 4));
+			mum.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 5));
+
+			var dad = new Genome(1, 2);
+			dad.genes.push(new Gene("INPUT:0", "OUTPUT:0", 1, 1));
+			dad.genes.push(new Gene("INPUT:0", "HIDDEN:0", 1, 3));
+			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:0", 1, 4));
+			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 5));
+			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 6));
+
+			var child = neuroevolution.crossover(mum, dad);
+			child.getNetwork().calculate();
 
 			var visualizer = new NetworkVisualizer();
-			var i = 0;
-			while (neuroevolution.genomes[i].getNetwork().hidden.length === 0 && i < neuroevolution.populationSize - 1) {
-				i++;
-			}
-			visualizer.drawNetwork(neuroevolution.genomes[i].getNetwork());
-			return JSON.stringify(neuroevolution.genomes[i].genes);
+			visualizer.drawNetwork(child.getNetwork());
+			return JSON.stringify(child.genes);
 		}
 
 		document.getElementById("networkData").innerHTML = neuroevolutionTestCase();
