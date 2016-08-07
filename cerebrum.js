@@ -189,7 +189,7 @@
  };
 
  /**
- * Creates all possible connections between nodes, including connections to the bias node.
+ * Creates all possible connections between nodes, not including connections to the bias node.
  * @param  {Boolean} randomWeights Whether to choose a random weight between -1 and 1, or to default to 1.
  */
  Network.prototype.createAllConnections = function(randomWeights) {
@@ -204,6 +204,10 @@
  			}
  			this.addConnection(this.inputs[i], this.hidden[j], weight);
  		}
+ 		if (randomWeights) {
+ 			weight = Math.random() * 4 - 2;
+ 		}
+ 		this.addConnection("BIAS", this.inputs[i], weight);
  	}
  	for (var k = 0; k < this.hidden.length; k++) {
  		for (var l = 0; l < this.outputs.length; l++) {
@@ -215,13 +219,7 @@
  		if (randomWeights) {
  			weight = Math.random() * 4 - 2;
  		}
- 		this.addConnection("BIAS", this.hidden[k]);
- 	}
- 	for (var m = 0; m < this.outputs.length; m++) {
- 		if (randomWeights) {
- 			weight = Math.random() * 4 - 2;
- 		}
- 		this.addConnection("BIAS", this.outputs[m], weight);
+ 		this.addConnection("BIAS", this.hidden[k], weight);
  	}
  };
 
@@ -302,7 +300,7 @@
  	if (this.nodeRadius != -1) {
  		radius = this.nodeRadius;
  	} else {
- 		radius = Math.min(canv.width, canv.height) / (Math.max(network.inputs.length, network.hidden.length, network.outputs.length)) / 2.5;
+ 		radius = Math.min(canv.width, canv.height) / (Math.max(network.inputs.length, network.hidden.length, network.outputs.length, 3)) / 2.5;
  	}
  	var nodeLocations = {};
  	var inputX = canv.width / 5;
@@ -317,9 +315,10 @@
  	for (var outputIndex = 0; outputIndex < network.outputs.length; outputIndex++) {
  		nodeLocations[network.outputs[outputIndex]] = {x: outputX, y: canv.height / (network.outputs.length) * (outputIndex + 0.5)};
  	}
+ 	nodeLocations.BIAS = {x: canv.width / 3, y: radius / 2};
  	for (var connectionKey in network.connections) {
  		var connection = network.connections[connectionKey];
- 		if (connection.in != "BIAS" && connection.out != "BIAS") {
+ 		//if (connection.in != "BIAS" && connection.out != "BIAS") {
  			ctx.beginPath();
  			ctx.moveTo(nodeLocations[connection.in].x, nodeLocations[connection.in].y);
  			ctx.lineTo(nodeLocations[connection.out].x, nodeLocations[connection.out].y);
@@ -331,12 +330,16 @@
  			ctx.lineWidth = connection.weight * this.connectionStrokeModifier;
  			ctx.lineCap = "round";
  			ctx.stroke();
- 		}
+ 		//}
  	}
  	for (var nodeKey in nodeLocations) {
  		var node = network.getNodeByID(nodeKey);
  		ctx.beginPath();
- 		ctx.arc(nodeLocations[nodeKey].x, nodeLocations[nodeKey].y, radius, 0, 2 * Math.PI);
+ 		if (nodeKey == "BIAS") {
+ 			ctx.arc(nodeLocations[nodeKey].x, nodeLocations[nodeKey].y, radius / 2.2, 0, 2 * Math.PI);
+ 		} else {
+ 			ctx.arc(nodeLocations[nodeKey].x, nodeLocations[nodeKey].y, radius, 0, 2 * Math.PI);
+ 		}
  		ctx.fillStyle = this.backgroundColor;
  		ctx.fill();
  		ctx.strokeStyle = this.nodeColor;
@@ -345,12 +348,13 @@
  		ctx.globalAlpha = node.value;
  		ctx.fillStyle = this.nodeColor;
  		ctx.fill();
- 		ctx.globalAlpha = 1; 	}
- 	};
+ 		ctx.globalAlpha = 1; 	
+ 	}
+ };
 
 
- 	BackpropNetwork.prototype = new Network();
- 	BackpropNetwork.prototype.constructor = BackpropNetwork;
+ BackpropNetwork.prototype = new Network();
+ BackpropNetwork.prototype.constructor = BackpropNetwork;
 
 /**
  * Neural network that is optimized via backpropagation.
@@ -535,6 +539,15 @@
  	this.globalRank = 0;
  }
 
+ Genome.prototype.containsGene = function(inID, outID) {
+ 	for (var i = 0; i < this.genes.length; i++) {
+ 		if (this.genes[i].inID == inID && this.genes[i].outID == outID) {
+ 			return true;
+ 		}
+ 	}
+ 	return false;
+ };
+
  function Species() {
  	this.genomes = [];
  	this.averageFitness = 0;
@@ -678,7 +691,6 @@
  * Mutates the entire population based on the mutation rates.
  */
  Neuroevolution.prototype.mutate = function() {
- 	//TODO: Fix gene overlapping by checking the genome's connections as opposed to just the generated network
  	for (var i = 0; i < this.genomes.length; i++) {
  		var network = this.genomes[i].getNetwork();
  		if (Math.random() < this.mutationRates.createConnection) {
@@ -699,23 +711,28 @@
  						}
  					}
  				}
- 				var nodeName = "HIDDEN:" + newNum;
- 				this.genomes[i].genes[geneIndex].enabled = false;
- 				this.genomes[i].genes.push(new Gene(gene.in, nodeName, 1, this.globalInnovationCounter));
- 				this.globalInnovationCounter++;
- 				this.genomes[i].genes.push(new Gene(nodeName, gene.out, gene.weight, this.globalInnovationCounter));
- 				this.globalInnovationCounter++;
- 			}
- 			network = this.genomes[i].getNetwork();
- 		}
- 		for (var inputIndex = 0; inputIndex < network.inputs; inputIndex++) {
- 			if (Math.random() < this.mutationRates.createBias && network.getConnection("BIAS:" + network.inputs[inputIndex]) === undefined) {
- 				this.genomes[i].genes.push(new Gene("BIAS", network.inputs[inputIndex]));
+ 				if (newNum < this.hiddenNeuronCap) {
+ 					var nodeName = "HIDDEN:" + newNum;
+ 					this.genomes[i].genes[geneIndex].enabled = false;
+ 					this.genomes[i].genes.push(new Gene(gene.in, nodeName, 1, this.globalInnovationCounter));
+ 					this.globalInnovationCounter++;
+ 					this.genomes[i].genes.push(new Gene(nodeName, gene.out, gene.weight, this.globalInnovationCounter));
+ 					this.globalInnovationCounter++;
+ 					network = this.genomes[i].getNetwork();
+ 				}
  			}
  		}
- 		for (var hiddenIndex = 0; hiddenIndex < network.hidden; hiddenIndex++) {
- 			if (Math.random() < this.mutationRates.createBias && network.getConnection("BIAS:" + network.hidden[hiddenIndex]) === undefined) {
- 				this.genomes[i].genes.push(new Gene("BIAS", network.hidden[hiddenIndex]));
+ 		if (Math.random() < this.mutationRates.createBias) {
+ 			if (Math.random() > 0.5 && network.inputs.length > 0) {
+ 				var inputIndex = randomNumBetween(0, network.inputs.length - 1);
+ 				if (network.getConnection("BIAS:" + network.inputs[inputIndex]) === undefined) {
+ 					this.genomes[i].genes.push(new Gene("BIAS", network.inputs[inputIndex]));
+ 				}
+ 			} else if (network.hidden.length > 0) {
+ 				var hiddenIndex = randomNumBetween(0, network.hidden.length - 1);
+ 				if (network.getConnection("BIAS:" + network.hidden[hiddenIndex]) === undefined) {
+ 					this.genomes[i].genes.push(new Gene("BIAS", network.hidden[hiddenIndex]));
+ 				}
  			}
  		}
  		for (var k = 0; k < this.genomes[i].genes.length; k++) {
@@ -739,7 +756,7 @@
  		inNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
  		outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
  	}
- 	if (network.connections[inNode + ":" + outNode] === undefined) {
+ 	if (!genome.containsGene(inNode, outNode)) {
  		var newGene = new Gene(inNode, outNode, Math.random() * 2 - 1);
  		if (this.newInnovations[newGene.in + ":" + newGene.out] === undefined) {
  			this.newInnovations[newGene.in + ":" + newGene.out] = this.globalInnovationCounter;

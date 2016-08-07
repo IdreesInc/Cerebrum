@@ -30,12 +30,15 @@
 	<script type="text/javascript">
 		var neuroevolution;
 		var eliteFitness = [];
+		var elites = [];
+		var visualizer;
 
 		function neuroevolutionTestCase() {
 			neuroevolution = new Neuroevolution({				
 				inputNodes: 2,
 				outputNodes: 1,
-				hiddenNeuronCap: 3
+				hiddenNeuronCap: 4,
+				populationSize: 50
 			});
 
 			var inputData = [[1, 0], [0, 1], [0, 0], [1, 1]];
@@ -52,9 +55,10 @@
 			};
 			neuroevolution.createInitialPopulation();
 
-			for (var z = 0; z < 750; z++) {
+			for (var z = 0; z < 1000; z++) {
 				neuroevolution.calculateFitnesses();
 				eliteFitness.push(neuroevolution.getElite().fitness);
+				elites.push(neuroevolution.getElite());
 				if (neuroevolution.getElite().fitness > 0.995) {
 					break;
 				}
@@ -75,8 +79,10 @@
 			}
 			results += "</table></br><i>Total Error: " + totalError + "</i>";
 
-			var visualizer = new NetworkVisualizer();
+			visualizer = new NetworkVisualizer();
 			visualizer.drawNetwork(network);
+
+			console.log(neuroevolution.getElite());
 
 			return results;		
 		}
@@ -107,6 +113,12 @@
 			};
 
 			var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+			google.visualization.events.addListener(chart, 'select', function (e) {
+				if (chart.getSelection()[0] !== undefined) {
+					visualizer = new NetworkVisualizer();
+					visualizer.drawNetwork(elites[chart.getSelection()[0].row].getNetwork());
+				}
+			});
 
 			chart.draw(data, options);
 		}
