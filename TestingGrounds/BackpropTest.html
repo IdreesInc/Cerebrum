@@ -64,7 +64,7 @@
 
 		document.getElementById("networkData").innerHTML = backpropTestCase();
 
-		//Google charts visualization of the average error over time
+		document.getElementById("curve_chart").style.width = document.body.clientWidth - 600 + "px";
 		google.charts.load('current', {'packages':['corechart']});
 		google.charts.setOnLoadCallback(drawChart);
 

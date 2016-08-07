@@ -531,8 +531,32 @@
  	this.inputNodes = inputNodes;
  	this.outputNodes = outputNodes;
  	this.genes = [];
- 	this.fitness = -1;
+ 	this.fitness = -Number.MAX_VALUE;
+ 	this.globalRank = 0;
  }
+
+ function Species() {
+ 	this.genomes = [];
+ 	this.averageFitness = 0;
+ }
+
+ Species.prototype.cull = function(remaining) {
+ 	this.genomes.sort(compareGenomesDescending);
+ 	if (remaining === undefined) {
+ 		remaining = Math.ceil(this.genomes.length / 2);
+ 	}
+ 	while (this.genomes.length > remaining) {
+ 		this.genomes.pop();
+ 	}
+ };
+
+ Species.prototype.calculateAverageFitness = function() {
+ 	var sum = 0;
+ 	for (var j = 0; j < this.genomes.length; j++) {
+ 		sum += this.genomes[j].fitness;
+ 	}
+ 	this.averageFitness = sum / this.genomes.length;
+ };
 
 /**
  * Returns the network that the genome represents.
@@ -567,7 +591,7 @@
  	this.populationSize = 100;
  	this.mutationRates = {
  		createConnection: 0.05,
- 		createNode: 0.05,
+ 		createNode: 0.02,
  		modifyWeight: 0.15,
  		enableGene: 0.05,
  		disableGene: 0.1,
@@ -576,7 +600,16 @@
  	};
  	this.inputNodes = 0;
  	this.outputNodes = 0;
+ 	this.elitism = true;
+ 	this.deltaDisjoint = 2;
+ 	this.deltaWeights = 0.4;
+ 	this.deltaThreshold = 1;
+ 	this.hiddenNeuronCap = 10;
+ 	this.fitnessFunction = function (network) {log("ERROR: Fitness function not set"); return -1;};
  	this.globalInnovationCounter = 1;
+ 	this.currentGeneration = 0;
+ 	this.species = [];
+ 	this.newInnovations = {};
  	if (config !== undefined) {
  		if (config.populationSize !== undefined) {
  			this.populationSize = config.populationSize;
@@ -611,17 +644,31 @@
  				this.mutationRates.weightMutationStep = configRates.weightMutationStep;
  			}
  		}
+ 		if (config.elitism !== undefined) {
+ 			this.elitism = config.elitism;
+ 		}
+ 		if (config.deltaDisjoint !== undefined) {
+ 			this.deltaDisjoint = config.deltaDisjoint;
+ 		}
+ 		if (config.deltaWeights !== undefined) {
+ 			this.deltaWeights = config.deltaWeights;
+ 		}
+ 		if (config.deltaThreshold !== undefined) {
+ 			this.deltaThreshold = config.deltaThreshold;
+ 		}
+ 		if (config.hiddenNeuronCap !== undefined) {
+ 			this.hiddenNeuronCap = config.hiddenNeuronCap;
+ 		}
  	}
  }
 
 /**
  * Populates the population with empty genomes, and then mutates the genomes.
- * @param  {Number} populationSize The size of the population to create.
  */
  Neuroevolution.prototype.createInitialPopulation = function() {
  	this.genomes = [];
  	for (var i = 0; i < this.populationSize; i++) {
- 		var genome = new Genome(this.inputNodes, this.outputNodes);
+ 		var genome = this.linkMutate(new Genome(this.inputNodes, this.outputNodes));
  		this.genomes.push(genome);
  	}
  	this.mutate();
@@ -631,35 +678,13 @@
  * Mutates the entire population based on the mutation rates.
  */
  Neuroevolution.prototype.mutate = function() {
- 	var newInnovations = {};
+ 	//TODO: Fix gene overlapping by checking the genome's connections as opposed to just the generated network
  	for (var i = 0; i < this.genomes.length; i++) {
  		var network = this.genomes[i].getNetwork();
  		if (Math.random() < this.mutationRates.createConnection) {
- 			var inNode = "";
- 			var outNode = "";
- 			if (Math.random() < 1/3 || network.hidden.length <= 0) {
- 				inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
- 				outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
- 			} else if (Math.random() < 2/3) {
- 				inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
- 				outNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
- 			} else {
- 				inNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
- 				outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
- 			}
- 			if (network.connections[inNode + ":" + outNode] === undefined) {
- 				var newGene = new Gene(inNode, outNode, Math.random() * 2 - 1);
- 				if (newInnovations[newGene.in + ":" + newGene.out] === undefined) {
- 					newInnovations[newGene.in + ":" + newGene.out] = this.globalInnovationCounter;
- 					newGene.innovation = this.globalInnovationCounter;
- 					this.globalInnovationCounter++;
- 				} else {
- 					newGene.innovation = newInnovations[newGene.in + ":" + newGene.out];
- 				}
- 				this.genomes[i].genes.push(newGene);
- 			}
+ 			this.genomes[i] = this.linkMutate(this.genomes[i]);
  		}
- 		if (Math.random() < this.mutationRates.createNode && this.genomes[i].genes.length > 0) {
+ 		if (Math.random() < this.mutationRates.createNode && this.genomes[i].genes.length > 0 && network.hidden.length < this.hiddenNeuronCap) {
  			var geneIndex = randomNumBetween(0, this.genomes[i].genes.length - 1);
  			var gene = this.genomes[i].genes[geneIndex];
  			if (gene.enabled && gene.in.indexOf("INPUT") != -1 && gene.out.indexOf("OUTPUT") != -1) {
@@ -681,15 +706,16 @@
  				this.genomes[i].genes.push(new Gene(nodeName, gene.out, gene.weight, this.globalInnovationCounter));
  				this.globalInnovationCounter++;
  			}
+ 			network = this.genomes[i].getNetwork();
  		}
  		for (var inputIndex = 0; inputIndex < network.inputs; inputIndex++) {
- 			if (Math.random() < this.mutationRates.createBias) {
+ 			if (Math.random() < this.mutationRates.createBias && network.getConnection("BIAS:" + network.inputs[inputIndex]) === undefined) {
  				this.genomes[i].genes.push(new Gene("BIAS", network.inputs[inputIndex]));
  			}
  		}
  		for (var hiddenIndex = 0; hiddenIndex < network.hidden; hiddenIndex++) {
- 			if (Math.random() < this.mutationRates.createBias) {
- 				this.genomes[i].genes.push(new Gene("BIAS", network.hidden[inputIndex]));
+ 			if (Math.random() < this.mutationRates.createBias && network.getConnection("BIAS:" + network.hidden[hiddenIndex]) === undefined) {
+ 				this.genomes[i].genes.push(new Gene("BIAS", network.hidden[hiddenIndex]));
  			}
  		}
  		for (var k = 0; k < this.genomes[i].genes.length; k++) {
@@ -697,6 +723,52 @@
  		}
 
  	}
+ };
+
+ Neuroevolution.prototype.linkMutate = function(genome) {
+ 	var network = genome.getNetwork();
+ 	var inNode = "";
+ 	var outNode = "";
+ 	if (Math.random() < 1/3 || network.hidden.length <= 0) {
+ 		inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
+ 		outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
+ 	} else if (Math.random() < 2/3) {
+ 		inNode = network.inputs[randomNumBetween(0, this.inputNodes - 1)];
+ 		outNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
+ 	} else {
+ 		inNode = network.hidden[randomNumBetween(0, network.hidden.length - 1)];
+ 		outNode = network.outputs[randomNumBetween(0, this.outputNodes - 1)];
+ 	}
+ 	if (network.connections[inNode + ":" + outNode] === undefined) {
+ 		var newGene = new Gene(inNode, outNode, Math.random() * 2 - 1);
+ 		if (this.newInnovations[newGene.in + ":" + newGene.out] === undefined) {
+ 			this.newInnovations[newGene.in + ":" + newGene.out] = this.globalInnovationCounter;
+ 			newGene.innovation = this.globalInnovationCounter;
+ 			this.globalInnovationCounter++;
+ 		} else {
+ 			newGene.innovation = this.newInnovations[newGene.in + ":" + newGene.out];
+ 		}
+ 		genome.genes.push(newGene);
+ 	}
+ 	return genome;
+ };
+
+ /**
+ * Mutates the given gene based on the mutation rates.
+ * @param  {Gene} The gene to mutate.
+ * @return {Gene} The mutated gene.
+ */
+ Neuroevolution.prototype.pointMutate = function(gene) {
+ 	if (Math.random() < this.mutationRates.modifyWeight) {
+ 		gene.weight = gene.weight + Math.random() * this.mutationRates.weightMutationStep * 2 - this.mutationRates.weightMutationStep; 
+ 	}
+ 	if (Math.random() < this.mutationRates.enableGene) {
+ 		gene.enabled = true;
+ 	}
+ 	if (Math.random() < this.mutationRates.disableGene) {
+ 		gene.enabled = false;
+ 	}
+ 	return gene;
  };
 
 /**
@@ -737,22 +809,139 @@
  	return child;
  };
 
+ Neuroevolution.prototype.evolve = function() {
+ 	this.currentGeneration++;
+ 	this.newInnovations = {};
+ 	this.genomes.sort(compareGenomesDescending);
+ 	//TODO: Add speciation
+/* 	this.speciate();
+ 	this.cullSpecies();
+ 	this.calculateSpeciesAvgFitness();
+ 	var totalAvgFitness = 0;
+ 	for (var i = 0; i < this.species.length; i++) {
+ 		totalAvgFitness += this.species[i].averageFitness;
+ 	}
+ 	var totalFitness = 0;
+ 	for (var z = 0; z < this.genomes.length; z++) {
+ 		totalFitness += this.genomes[z].fitness;
+ 	}
+ 	log(totalAvgFitness + " " + totalFitness);
+ 	var children = [];
+ 	for (var j = 0; j < this.species.length; j++) {
+ 		var toCreate = Math.floor(this.species[j].averageFitness / totalAvgFitness * this.populationSize);
+ 		for (var k = 0; k < toCreate; k++) {
+ 			children.push(this.makeBaby(this.species[j]));
+ 		}
+ 	}
+ 	this.cullSpecies(1);
+ 	while (children.length + this.genomes.length < this.populationSize) {
+ 		children.push(this.makeBaby(this.species[randomNumBetween(0, this.species.length - 1)]));
+ 	}
+ 	this.genomes = this.genomes.concat(children);
+ 	this.speciate();*/
+ 	var children = [];
+ 	var elite = this.genomes[0];
+ 	children.push(elite);
+ 	for (var i = 0; i < this.populationSize - 2; i++) {
+ 		var mum = this.genomes[randomNumBetween(0, this.genomes.length / 3)];
+ 		var dad = this.genomes[randomNumBetween(0, this.genomes.length / 3)];
+ 		children.push(this.crossover(mum, dad));
+ 	}
+ 	this.genomes = [];
+ 	this.genomes = this.genomes.concat(children);
+ 	this.mutate();
+ 	this.genomes.push(elite);
+ 	//log(this.genomes);
+ };
+
+ Neuroevolution.prototype.speciate = function() {
+ 	this.species = [];
+ 	for (var i = 0; i < this.genomes.length; i++) {
+ 		var placed = false;
+ 		for (var j = 0; j < this.species.length; j++) {
+ 			if (!placed && this.species[j].genomes.length > 0 && this.isSameSpecies(this.genomes[i], this.species[j].genomes[0])) {
+ 				this.species[j].genomes.push(this.genomes[i]);
+ 				placed = true;
+ 			}
+ 		}
+ 		if (!placed) {
+ 			var newSpecies = new Species();
+ 			newSpecies.genomes.push(this.genomes[i]);
+ 			this.species.push(newSpecies);
+ 		}
+ 	}
+ };
+
+ Neuroevolution.prototype.cullSpecies = function(remaining) {
+ 	for (var i = 0; i < this.species.length; i++) {
+ 		this.species[i].cull(remaining);
+ 	}
+ };
+
+ Neuroevolution.prototype.calculateSpeciesAvgFitness = function() {
+ 	for (var i = 0; i < this.species.length; i++) {
+ 		this.species[i].calculateAverageFitness();
+ 	}
+ };
+
+ Neuroevolution.prototype.makeBaby = function(species) {
+ 	var mum = species.genomes[randomNumBetween(0, species.genomes.length - 1)];
+ 	var dad = species.genomes[randomNumBetween(0, species.genomes.length - 1)];
+ 	return this.crossover(mum, dad);
+ };
+
+ Neuroevolution.prototype.calculateFitnesses = function(first_argument) {
+ 	for (var i = 0; i < this.genomes.length; i++) {
+ 		this.genomes[i].fitness = this.fitnessFunction(this.genomes[i].getNetwork());
+ 	}
+ };
+
 /**
- * Mutates the given gene based on the mutation rates.
- * @param  {Gene} The gene to mutate.
- * @return {Gene} The mutated gene.
+ * Returns the relative compatibility metric for the given genomes.
+ * @param  {Genome} genomeA The first genome to compare.
+ * @param  {Genome} genomeB The second genome to compare.
+ * @return {Number} The relative compatibility metric. 
  */
- Neuroevolution.prototype.pointMutate = function(gene) {
- 	if (Math.random() < this.mutationRates.modifyWeight) {
- 		gene.weight = gene.weight + Math.random() * this.mutationRates.weightMutationStep * 2 - this.mutationRates.weightMutationStep; 
+ Neuroevolution.prototype.getCompatibility = function(genomeA, genomeB) {
+ 	var disjoint = 0;
+ 	var totalWeight = 0;
+ 	var aInnovationNums = {};
+ 	for (var i = 0; i < genomeA.genes.length; i++) {
+ 		aInnovationNums[genomeA.genes[i].innovation] = i;
  	}
- 	if (Math.random() < this.mutationRates.enableGene) {
- 		gene.enabled = true;
+ 	var bInnovationNums = [];
+ 	for (var j = 0; j < genomeB.genes.length; j++) {
+ 		bInnovationNums[genomeB.genes[j].innovation] = j;
  	}
- 	if (Math.random() < this.mutationRates.disableGene) {
- 		gene.enabled = false;
+ 	for (var k = 0; k < genomeA.genes.length; k++) {
+ 		if (bInnovationNums[genomeA.genes[k].innovation] === undefined) {
+ 			disjoint++;
+ 		} else {
+ 			totalWeight += Math.abs(genomeA.genes[k].weight - genomeB.genes[bInnovationNums[genomeA.genes[k].innovation]].weight);
+ 		}
  	}
- 	return gene;
+ 	for (var l = 0; l < genomeB.genes.length; l++) {
+ 		if (aInnovationNums[genomeB.genes[l].innovation] === undefined) {
+ 			disjoint++;
+ 		}
+ 	}
+ 	var n = Math.max(genomeA.genes.length, genomeB.genes.length);
+ 	return this.deltaDisjoint * (disjoint / n) + this.deltaWeights * (totalWeight / n);
+ };
+
+/**
+ * Determines whether the given genomes are from the same species.
+ * @param  {Genome}  genomeA The first genome to compare.
+ * @param  {Genome}  genomeB The second genome to compare.
+ * @return {Boolean} Whether the given genomes are from the same species.
+ */
+ Neuroevolution.prototype.isSameSpecies = function(genomeA, genomeB) {
+ 	return this.getCompatibility(genomeA, genomeB) < this.deltaThreshold;
+ };
+
+ Neuroevolution.prototype.getElite = function() {
+ 	this.genomes.sort(compareGenomesDescending);
+ 	return this.genomes[0];
  };
 
 
@@ -764,6 +953,26 @@ function sigmoid(t) {
 function randomNumBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+function compareGenomesAscending(genomeA, genomeB) {
+	return genomeA.fitness - genomeB.fitness;
+}
+
+function compareGenomesDescending(genomeA, genomeB) {
+	return genomeB.fitness - genomeA.fitness;
+}
+
+Array.prototype.remove = function() {
+	var what, a = arguments, L = a.length, ax;
+	while (L && this.length) {
+		what = a[--L];
+		while ((ax = this.indexOf(what)) !== -1) {
+			this.splice(ax, 1);
+		}
+	}
+	return this;
+};
+
 
 function log(text) {
 	console.log(text);

@@ -1,49 +1,115 @@
 <!DOCTYPE html>
 <html>
 <title>Neuroevolution Test</title>
+<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+	}
 
+	td, th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	tr:nth-child(even) {
+		background-color: #dddddd;
+	}
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="../cerebrum.js"></script>
 <body>
 	<center>
 		<div id="networkData"></div>
-		<canvas id="NetworkVisualizer" height="400px" width= "1000px"></canvas>
+		<canvas id="NetworkVisualizer" height="400px" width= "600px" style="float: left"></canvas>
+		<div id="curve_chart" style="height: 400px; width: 600px; float: right"></div>
 	</center>
 	<script type="text/javascript">
 		var neuroevolution;
+		var eliteFitness = [];
 
 		function neuroevolutionTestCase() {
 			neuroevolution = new Neuroevolution({				
 				inputNodes: 2,
 				outputNodes: 1,
-				mutationRates: {
-					createConnection: 1,
-					createNode: 1
-				}
+				hiddenNeuronCap: 3
 			});
+
+			var inputData = [[1, 0], [0, 1], [0, 0], [1, 1]];
+			var targetData = [[1], [1], [0], [0]];
+
+			neuroevolution.fitnessFunction = function (network) {
+				var fitness = 0;
+				for (var j = 0; j < inputData.length; j++) {
+					network.setInputs(inputData[j]);
+					network.calculate();
+					fitness += 1 - Math.pow(Math.abs(network.getNode("OUTPUT", 0).value - targetData[j][0]),  2);
+				}
+				return fitness / inputData.length;
+			};
 			neuroevolution.createInitialPopulation();
-			var mum = new Genome(1, 2);
-			mum.genes.push(new Gene("INPUT:0", "OUTPUT:0", 1, 1));
-			mum.genes.push(new Gene("INPUT:0", "OUTPUT:1", 1, 2));
-			mum.genes.push(new Gene("INPUT:0", "HIDDEN:0", 1, 3));
-			mum.genes.push(new Gene("HIDDEN:0", "OUTPUT:0", 1, 4));
-			mum.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 5));
 
-			var dad = new Genome(1, 2);
-			dad.genes.push(new Gene("INPUT:0", "OUTPUT:0", 1, 1));
-			dad.genes.push(new Gene("INPUT:0", "HIDDEN:0", 1, 3));
-			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:0", 1, 4));
-			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 5));
-			dad.genes.push(new Gene("HIDDEN:0", "OUTPUT:1", 1, 6));
+			for (var z = 0; z < 750; z++) {
+				neuroevolution.calculateFitnesses();
+				eliteFitness.push(neuroevolution.getElite().fitness);
+				if (neuroevolution.getElite().fitness > 0.995) {
+					break;
+				}
+				neuroevolution.evolve();
+			}
 
-			var child = neuroevolution.crossover(mum, dad);
-			child.getNetwork().calculate();
+			var network = neuroevolution.getElite().getNetwork();
+			var visualizer = new NetworkVisualizer();
+			visualizer.drawNetwork(network);
+
+			var results = "<table><caption><h3>XOR Test Case, Iterated " + neuroevolution.currentGeneration + " times</h3></caption><th>Input One</th><th>Input Two</th><th>Output</th><th>Error</th>";
+			var totalError = 0;
+			for (var k = 0; k < inputData.length; k++) {
+				network.setInputs(inputData[k]);
+				network.calculate();
+				results += "<tr><td>" + network.getNode("INPUT", 0).value + "</td><td>" + network.getNode("INPUT", 1).value + "</td><td>" + network.getNode("OUTPUT", 0).value + "</td><td>" + Math.abs(network.getNode("OUTPUT", 0).value - targetData[k][0]) + "</tr>";
+				totalError += Math.abs(network.getNode("OUTPUT", 0).value);
+			}
+			results += "</table></br><i>Total Error: " + totalError + "</i>";
 
 			var visualizer = new NetworkVisualizer();
-			visualizer.drawNetwork(child.getNetwork());
-			return JSON.stringify(child.genes);
+			visualizer.drawNetwork(network);
+
+			return results;		
 		}
 
 		document.getElementById("networkData").innerHTML = neuroevolutionTestCase();
+
+		document.getElementById("curve_chart").style.width = document.body.clientWidth - 600 + "px";
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawChart);
+
+		function drawChart() {
+			var dataArray = [['Generation', 'Elite Fitness']];
+			for (var i = 0; i < eliteFitness.length; i++) {
+				dataArray.push([i, eliteFitness[i]]);
+			}
+			var data = google.visualization.arrayToDataTable(dataArray);
+
+			var options = {
+				title: 'Elite Fitness per Generation',
+				legend: { position: 'bottom' },
+				hAxis: {
+					title: 'Iteration'
+				},
+				vAxis: {
+					title: 'Elite Fitness'
+				},
+				lineWidth: 3,
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+			chart.draw(data, options);
+		}
 	</script>
 </body>
 </html>
