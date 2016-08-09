@@ -51,7 +51,7 @@ Then, create a variable in javascript such as the one below:
 neuroevolution = new Neuroevolution({				
 	inputNodes: 2,
 	outputNodes: 1,
-	hiddenNeuronCap: 3, //The max amount of hidden nodes that can be created
+	hiddenNodeCap: 3, //The max amount of hidden nodes that can be created
 	populationSize: 100 //The number of genomes create and evolve in each generation
 });
 ```
