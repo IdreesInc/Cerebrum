@@ -37,8 +37,8 @@
 			neuroevolution = new Neuroevolution({				
 				inputNodes: 2,
 				outputNodes: 1,
-				hiddenNeuronCap: 4,
-				populationSize: 50
+				hiddenNeuronCap: 3,
+				populationSize: 100
 			});
 
 			var inputData = [[1, 0], [0, 1], [0, 0], [1, 1]];
@@ -59,7 +59,7 @@
 				neuroevolution.calculateFitnesses();
 				eliteFitness.push(neuroevolution.getElite().fitness);
 				elites.push(neuroevolution.getElite());
-				if (neuroevolution.getElite().fitness > 0.995) {
+				if (neuroevolution.getElite().fitness > 0.997) {
 					break;
 				}
 				neuroevolution.evolve();

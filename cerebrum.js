@@ -537,6 +537,7 @@
  	this.genes = [];
  	this.fitness = -Number.MAX_VALUE;
  	this.globalRank = 0;
+ 	this.randomIdentifier = Math.random();
  }
 
  Genome.prototype.containsGene = function(inID, outID) {
@@ -616,7 +617,7 @@
  	this.elitism = true;
  	this.deltaDisjoint = 2;
  	this.deltaWeights = 0.4;
- 	this.deltaThreshold = 1;
+ 	this.deltaThreshold = 2;
  	this.hiddenNeuronCap = 10;
  	this.fitnessFunction = function (network) {log("ERROR: Fitness function not set"); return -1;};
  	this.globalInnovationCounter = 1;
@@ -830,45 +831,36 @@
  	this.currentGeneration++;
  	this.newInnovations = {};
  	this.genomes.sort(compareGenomesDescending);
- 	//TODO: Add speciation
-/* 	this.speciate();
+ 	var children = [];
+ 	this.speciate();
  	this.cullSpecies();
  	this.calculateSpeciesAvgFitness();
+
  	var totalAvgFitness = 0;
- 	for (var i = 0; i < this.species.length; i++) {
- 		totalAvgFitness += this.species[i].averageFitness;
+ 	var avgFitnesses = [];
+ 	for (var s = 0; s < this.species.length; s++) {
+ 		totalAvgFitness += this.species[s].averageFitness;
+ 		avgFitnesses.push(this.species[s].averageFitness);
  	}
- 	var totalFitness = 0;
- 	for (var z = 0; z < this.genomes.length; z++) {
- 		totalFitness += this.genomes[z].fitness;
- 	}
- 	log(totalAvgFitness + " " + totalFitness);
- 	var children = [];
+ 	var arr = [];
  	for (var j = 0; j < this.species.length; j++) {
- 		var toCreate = Math.floor(this.species[j].averageFitness / totalAvgFitness * this.populationSize);
- 		for (var k = 0; k < toCreate; k++) {
+ 		var childrenToMake = Math.floor(this.species[j].averageFitness / totalAvgFitness * this.populationSize);
+ 		arr.push(childrenToMake);
+ 		if (childrenToMake > 0) {
+ 			children.push(this.species[j].genomes[0]);
+ 		}
+ 		for (var c = 0; c < childrenToMake - 1; c++) {
  			children.push(this.makeBaby(this.species[j]));
  		}
  	}
- 	this.cullSpecies(1);
- 	while (children.length + this.genomes.length < this.populationSize) {
+ 	while (children.length < this.populationSize) {
  		children.push(this.makeBaby(this.species[randomNumBetween(0, this.species.length - 1)]));
- 	}
- 	this.genomes = this.genomes.concat(children);
- 	this.speciate();*/
- 	var children = [];
- 	var elite = this.genomes[0];
- 	children.push(elite);
- 	for (var i = 0; i < this.populationSize - 2; i++) {
- 		var mum = this.genomes[randomNumBetween(0, this.genomes.length / 3)];
- 		var dad = this.genomes[randomNumBetween(0, this.genomes.length / 3)];
- 		children.push(this.crossover(mum, dad));
  	}
  	this.genomes = [];
  	this.genomes = this.genomes.concat(children);
  	this.mutate();
- 	this.genomes.push(elite);
- 	//log(this.genomes);
+ 	this.speciate();
+ 	log(this.species.length);
  };
 
  Neuroevolution.prototype.speciate = function() {
@@ -890,8 +882,15 @@
  };
 
  Neuroevolution.prototype.cullSpecies = function(remaining) {
+ 	var toRemove = [];
  	for (var i = 0; i < this.species.length; i++) {
  		this.species[i].cull(remaining);
+ 		if (this.species[i].genomes.length < 1) {
+ 			toRemove.push(this.species[i]);
+ 		}
+ 	}
+ 	for (var r = 0; r < toRemove.length; r++) {
+ 		this.species.remove(toRemove[r]);
  	}
  };
 
@@ -902,8 +901,8 @@
  };
 
  Neuroevolution.prototype.makeBaby = function(species) {
- 	var mum = species.genomes[randomNumBetween(0, species.genomes.length - 1)];
- 	var dad = species.genomes[randomNumBetween(0, species.genomes.length - 1)];
+ 	var mum = species.genomes[randomWeightedNumBetween(0, species.genomes.length - 1)];
+ 	var dad = species.genomes[randomWeightedNumBetween(0, species.genomes.length - 1)];
  	return this.crossover(mum, dad);
  };
 
@@ -969,6 +968,10 @@ function sigmoid(t) {
 
 function randomNumBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function randomWeightedNumBetween(min, max) {
+	return Math.floor(Math.pow(Math.random(), 2) * (max - min + 1) + min);
 }
 
 function compareGenomesAscending(genomeA, genomeB) {
