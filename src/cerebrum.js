@@ -554,6 +554,10 @@
  	this.averageFitness = 0;
  }
 
+/**
+ * Culls the genomes to the given amount by removing less fit genomes.
+ * @param  {Number} [remaining] The number of genomes to cull to [Default is half the size of the species (rounded up)].
+ */
  Species.prototype.cull = function(remaining) {
  	this.genomes.sort(compareGenomesDescending);
  	if (remaining === undefined) {
@@ -564,6 +568,9 @@
  	}
  };
 
+/**
+ * Calculates the average fitness of the species.
+ */
  Species.prototype.calculateAverageFitness = function() {
  	var sum = 0;
  	for (var j = 0; j < this.genomes.length; j++) {
@@ -743,6 +750,11 @@
  	}
  };
 
+/**
+ * Attempts to create a new connection gene in the given genome.
+ * @param  {Genome} genome The genome to mutate.
+ * @return {Genome} The mutated genome.
+ */
  Neuroevolution.prototype.linkMutate = function(genome) {
  	var network = genome.getNetwork();
  	var inNode = "";
@@ -827,6 +839,9 @@
  	return child;
  };
 
+/**
+ * Evolves the population by creating a new generation and mutating the children.
+ */
  Neuroevolution.prototype.evolve = function() {
  	this.currentGeneration++;
  	this.newInnovations = {};
@@ -863,6 +878,9 @@
  	log(this.species.length);
  };
 
+/**
+ * Sorts the genomes into different species.
+ */
  Neuroevolution.prototype.speciate = function() {
  	this.species = [];
  	for (var i = 0; i < this.genomes.length; i++) {
@@ -881,6 +899,10 @@
  	}
  };
 
+/**
+ * Culls all the species to the given amount by removing less fit members of each species.
+ * @param  {Number} [remaining] The number of genomes to cull all the species to [Default is half the size of the species].
+ */
  Neuroevolution.prototype.cullSpecies = function(remaining) {
  	var toRemove = [];
  	for (var i = 0; i < this.species.length; i++) {
@@ -894,19 +916,30 @@
  	}
  };
 
+/**
+ * Calculates the average fitness of all the species.
+ */
  Neuroevolution.prototype.calculateSpeciesAvgFitness = function() {
  	for (var i = 0; i < this.species.length; i++) {
  		this.species[i].calculateAverageFitness();
  	}
  };
 
+/**
+ * Creates a baby in the given species, with fitter genomes having a higher chance to reproduce.
+ * @param  {Species} species The species to create a baby in.
+ * @return {Genome} The resultant baby.
+ */
  Neuroevolution.prototype.makeBaby = function(species) {
  	var mum = species.genomes[randomWeightedNumBetween(0, species.genomes.length - 1)];
  	var dad = species.genomes[randomWeightedNumBetween(0, species.genomes.length - 1)];
  	return this.crossover(mum, dad);
  };
 
- Neuroevolution.prototype.calculateFitnesses = function(first_argument) {
+/**
+ * Calculates the fitness of all the genomes in the population.
+ */
+ Neuroevolution.prototype.calculateFitnesses = function() {
  	for (var i = 0; i < this.genomes.length; i++) {
  		this.genomes[i].fitness = this.fitnessFunction(this.genomes[i].getNetwork());
  	}
@@ -955,6 +988,10 @@
  	return this.getCompatibility(genomeA, genomeB) < this.deltaThreshold;
  };
 
+/**
+ * Returns the genome with the highest fitness in the population.
+ * @return {Genome} The elite genome.
+ */
  Neuroevolution.prototype.getElite = function() {
  	this.genomes.sort(compareGenomesDescending);
  	return this.genomes[0];
