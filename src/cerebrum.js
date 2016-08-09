@@ -625,7 +625,7 @@
  	this.deltaDisjoint = 2;
  	this.deltaWeights = 0.4;
  	this.deltaThreshold = 2;
- 	this.hiddenNeuronCap = 10;
+ 	this.hiddenNodeCap = 10;
  	this.fitnessFunction = function (network) {log("ERROR: Fitness function not set"); return -1;};
  	this.globalInnovationCounter = 1;
  	this.currentGeneration = 0;
@@ -677,8 +677,8 @@
  		if (config.deltaThreshold !== undefined) {
  			this.deltaThreshold = config.deltaThreshold;
  		}
- 		if (config.hiddenNeuronCap !== undefined) {
- 			this.hiddenNeuronCap = config.hiddenNeuronCap;
+ 		if (config.hiddenNodeCap !== undefined) {
+ 			this.hiddenNodeCap = config.hiddenNodeCap;
  		}
  	}
  }
@@ -704,7 +704,7 @@
  		if (Math.random() < this.mutationRates.createConnection) {
  			this.genomes[i] = this.linkMutate(this.genomes[i]);
  		}
- 		if (Math.random() < this.mutationRates.createNode && this.genomes[i].genes.length > 0 && network.hidden.length < this.hiddenNeuronCap) {
+ 		if (Math.random() < this.mutationRates.createNode && this.genomes[i].genes.length > 0 && network.hidden.length < this.hiddenNodeCap) {
  			var geneIndex = randomNumBetween(0, this.genomes[i].genes.length - 1);
  			var gene = this.genomes[i].genes[geneIndex];
  			if (gene.enabled && gene.in.indexOf("INPUT") != -1 && gene.out.indexOf("OUTPUT") != -1) {
@@ -719,7 +719,7 @@
  						}
  					}
  				}
- 				if (newNum < this.hiddenNeuronCap) {
+ 				if (newNum < this.hiddenNodeCap) {
  					var nodeName = "HIDDEN:" + newNum;
  					this.genomes[i].genes[geneIndex].enabled = false;
  					this.genomes[i].genes.push(new Gene(gene.in, nodeName, 1, this.globalInnovationCounter));

@@ -1,23 +1,7 @@
 <!DOCTYPE html>
 <html>
 <title>Neuroevolution Test</title>
-<style>
-	table {
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	td, th {
-		border: 1px solid #dddddd;
-		text-align: left;
-		padding: 8px;
-	}
-
-	tr:nth-child(even) {
-		background-color: #dddddd;
-	}
-</style>
+<link rel="stylesheet" type="text/css" href="stylesheet.css">
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="../src/cerebrum.js"></script>
@@ -37,7 +21,7 @@
 			neuroevolution = new Neuroevolution({				
 				inputNodes: 2,
 				outputNodes: 1,
-				hiddenNeuronCap: 3,
+				hiddenNodeCap: 3,
 				populationSize: 100
 			});
 
