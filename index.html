@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Cerebrum.js by IdreesInc</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Cerebrum.js</h1>
+        <h2>Cerebrum.js is a neural network library created in pure javascript.</h2>
+        <a href="https://github.com/IdreesInc/Cerebrum" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="cerebrumjs" class="anchor" href="#cerebrumjs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cerebrum.js</h1>
+
+<p>Give your applications a mind of their own with the power of deep learning algorithms.</p>
+
+<h4>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h4>
+
+<ul>
+<li>Create multilayer neural networks with a single hidden layer</li>
+<li>Use backpropagation or neuroevolution to train the networks</li>
+<li>Simple and easy to use syntax</li>
+<li>No external dependencies</li>
+</ul>
+
+<h3>
+<a id="example-1-backpropagation" class="anchor" href="#example-1-backpropagation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1: Backpropagation:</h3>
+
+<p>Lets try out Cerebrum.js by creating a simple XOR test case that we will train using backpropagation.</p>
+
+<p>Reference the library:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>cerebrum.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>Then, create a variable in javascript such as the one below:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BackpropNetwork</span>({             
+                inputNodes<span class="pl-k">:</span> <span class="pl-c1">2</span>,
+                hiddenNodes<span class="pl-k">:</span> <span class="pl-c1">3</span>,
+                outputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>,
+                createAllConnections<span class="pl-k">:</span> <span class="pl-c1">true</span>, <span class="pl-c">//Whether to initialize the network with all the possible connections (alternatively, you create the connections manually)</span>
+                inputData<span class="pl-k">:</span> [[<span class="pl-c1">1</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">1</span>, <span class="pl-c1">1</span>]], <span class="pl-c">//The data to set the input nodes to on each instance. Alternatively, you can set the input node values manually.</span>
+                targetData<span class="pl-k">:</span> [[<span class="pl-c1">1</span>], [<span class="pl-c1">1</span>], [<span class="pl-c1">0</span>], [<span class="pl-c1">0</span>]], <span class="pl-c">//The expected values for the output nodes. Will be used to train the network</span>
+                learningRate<span class="pl-k">:</span> <span class="pl-c1">0.5</span> <span class="pl-c">//The rate at which the propagation occurs. Higher values = faster learning, but also make the learning more inaccurate.</span>
+            });;</pre></div>
+
+<p>Now, you want to train your network. Lets backpropagate this network 500 times:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">for</span> (<span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> <span class="pl-c1">500</span>; i<span class="pl-k">++</span>) {
+    <span class="pl-smi">network</span>.<span class="pl-en">backpropagate</span>();
+}</pre></div>
+
+<p>Great, now your network is trained! To test it, lets set the input nodes to a certain test case:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">network</span>.<span class="pl-en">setInputs</span>([<span class="pl-c1">1</span>, <span class="pl-c1">0</span>]);
+<span class="pl-smi">network</span>.<span class="pl-en">calculate</span>(); <span class="pl-c">//Calculate the values for each node</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">network</span>.<span class="pl-en">getNode</span>(<span class="pl-s"><span class="pl-pds">"</span>OUTPUT<span class="pl-pds">"</span></span>, <span class="pl-c1">0</span>)); <span class="pl-c">//Should print something close to "1" (depending on how well the network trained, this value should vary from 1 by a very small amount)</span></pre></div>
+
+<h3>
+<a id="example-2-neuroevolution" class="anchor" href="#example-2-neuroevolution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 2: Neuroevolution</h3>
+
+<p>Backpropagation is all fun and good, but sometimes there are cases where you prefer to evolve a network instead (such as when you don't know what the topography of the network will end up like). This is where neuroevolution comes in! Neuroevolution in Cerebrum is based on the N.E.A.T. algorithm, so features such as speciation and innovation are built in!</p>
+
+<p>First off, reference the library:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>cerebrum.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<p>Then, create a variable in javascript such as the one below:</p>
+
+<div class="highlight highlight-source-js"><pre>neuroevolution <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Neuroevolution</span>({               
+    inputNodes<span class="pl-k">:</span> <span class="pl-c1">2</span>,
+    outputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>,
+    hiddenNodeCap<span class="pl-k">:</span> <span class="pl-c1">3</span>, <span class="pl-c">//The max amount of hidden nodes that can be created</span>
+    populationSize<span class="pl-k">:</span> <span class="pl-c1">100</span> <span class="pl-c">//The number of genomes create and evolve in each generation</span>
+});</pre></div>
+
+<p>Neuroevolution works by creating a population of genomes that represent networks. These genomes evolve, mutate, and breed in order to create networks with new innovations. But in order to determine which genomes should breed and which should die in each generation, each genome's "fitness" needs to be determined so that they can be compared against other genomes. That's where the fitness function comes in:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> inputData <span class="pl-k">=</span> [[<span class="pl-c1">1</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">1</span>, <span class="pl-c1">1</span>]];
+<span class="pl-k">var</span> targetData <span class="pl-k">=</span> [[<span class="pl-c1">1</span>], [<span class="pl-c1">1</span>], [<span class="pl-c1">0</span>], [<span class="pl-c1">0</span>]];
+
+<span class="pl-smi">neuroevolution</span>.<span class="pl-en">fitnessFunction</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">network</span>) { <span class="pl-c">//This function is used by Cerebrum to determine the fitness of each genome. Alternatively, the fitness can be set manually for each genome before the population evolves.</span>
+    <span class="pl-k">var</span> fitness <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+    <span class="pl-k">for</span> (<span class="pl-k">var</span> j <span class="pl-k">=</span> <span class="pl-c1">0</span>; j <span class="pl-k">&lt;</span> <span class="pl-smi">inputData</span>.<span class="pl-c1">length</span>; j<span class="pl-k">++</span>) {
+        <span class="pl-smi">network</span>.<span class="pl-en">setInputs</span>(inputData[j]);
+        <span class="pl-smi">network</span>.<span class="pl-en">calculate</span>();
+        fitness <span class="pl-k">+=</span> <span class="pl-c1">1</span> <span class="pl-k">-</span> <span class="pl-c1">Math</span>.<span class="pl-c1">pow</span>(<span class="pl-c1">Math</span>.<span class="pl-c1">abs</span>(<span class="pl-smi">network</span>.<span class="pl-en">getNode</span>(<span class="pl-s"><span class="pl-pds">"</span>OUTPUT<span class="pl-pds">"</span></span>, <span class="pl-c1">0</span>).<span class="pl-c1">value</span> <span class="pl-k">-</span> targetData[j][<span class="pl-c1">0</span>]),  <span class="pl-c1">2</span>); <span class="pl-c">//This equation will set the fitness for each genome by comparing how close the genome's network's output is to the target data, when the genome's network is fed the input data. The squaring function is used to disproportionally punish genomes that produce outputs that extremely vary from the target data.</span>
+    }
+    <span class="pl-k">return</span> fitness <span class="pl-k">/</span> <span class="pl-smi">inputData</span>.<span class="pl-c1">length</span>;
+};
+<span class="pl-smi">neuroevolution</span>.<span class="pl-en">createInitialPopulation</span>(); <span class="pl-c">//Create the initial, random population of genomes</span></pre></div>
+
+<p>Great, now let's evolve our population about 750 times!</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">for</span> (<span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> <span class="pl-c1">750</span>; i<span class="pl-k">++</span>) {
+    <span class="pl-smi">neuroevolution</span>.<span class="pl-en">calculateFitnesses</span>();
+    <span class="pl-smi">neuroevolution</span>.<span class="pl-en">evolve</span>();
+}</pre></div>
+
+<p>Now that we have evolved the population of genomes, let's see the results by creating a test case!</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-smi">neuroevolution</span>.<span class="pl-en">getElite</span>().<span class="pl-en">getNetwork</span>(); <span class="pl-c">//Get the best genome from the population, and get the network it represents</span>
+<span class="pl-smi">network</span>.<span class="pl-en">setInputs</span>(inputData[<span class="pl-c1">0</span>]); <span class="pl-c">//Feed the network the first test case's values</span>
+<span class="pl-smi">network</span>.<span class="pl-en">calculate</span>(); <span class="pl-c">//Calculate the values for each node</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">network</span>.<span class="pl-en">getNode</span>(<span class="pl-s"><span class="pl-pds">"</span>OUTPUT<span class="pl-pds">"</span></span>, <span class="pl-c1">0</span>)); <span class="pl-c">//Should print something close to "1" (depending on how well the network trained, this value should vary from 1 by a very small amount)</span></pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/IdreesInc/Cerebrum/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/IdreesInc/Cerebrum/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/IdreesInc/Cerebrum"></a> is maintained by <a href="https://github.com/IdreesInc">IdreesInc</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
