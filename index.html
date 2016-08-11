@@ -24,8 +24,8 @@
 
 <p>Give your applications a mind of their own with the power of deep learning algorithms.</p>
 
-<h4>
-<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h4>
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
 <li>Create multilayer neural networks with a single hidden layer</li>
@@ -35,7 +35,10 @@
 </ul>
 
 <h3>
-<a id="example-1-backpropagation" class="anchor" href="#example-1-backpropagation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1: Backpropagation:</h3>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h3>
+
+<h4>
+<a id="example-1-backpropagation" class="anchor" href="#example-1-backpropagation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1: Backpropagation:</h4>
 
 <p>Lets try out Cerebrum.js by creating a simple XOR test case that we will train using backpropagation.</p>
 
@@ -67,8 +70,8 @@
 <span class="pl-smi">network</span>.<span class="pl-en">calculate</span>(); <span class="pl-c">//Calculate the values for each node</span>
 <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">network</span>.<span class="pl-en">getNode</span>(<span class="pl-s"><span class="pl-pds">"</span>OUTPUT<span class="pl-pds">"</span></span>, <span class="pl-c1">0</span>)); <span class="pl-c">//Should print something close to "1" (depending on how well the network trained, this value should vary from 1 by a very small amount)</span></pre></div>
 
-<h3>
-<a id="example-2-neuroevolution" class="anchor" href="#example-2-neuroevolution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 2: Neuroevolution</h3>
+<h4>
+<a id="example-2-neuroevolution" class="anchor" href="#example-2-neuroevolution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 2: Neuroevolution</h4>
 
 <p>Backpropagation is all fun and good, but sometimes there are cases where you prefer to evolve a network instead (such as when you don't know what the topography of the network will end up like). This is where neuroevolution comes in! Neuroevolution in Cerebrum is based on the N.E.A.T. algorithm, so features such as speciation and innovation are built in!</p>
 
@@ -114,6 +117,1159 @@
 <span class="pl-smi">network</span>.<span class="pl-en">setInputs</span>(inputData[<span class="pl-c1">0</span>]); <span class="pl-c">//Feed the network the first test case's values</span>
 <span class="pl-smi">network</span>.<span class="pl-en">calculate</span>(); <span class="pl-c">//Calculate the values for each node</span>
 <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">network</span>.<span class="pl-en">getNode</span>(<span class="pl-s"><span class="pl-pds">"</span>OUTPUT<span class="pl-pds">"</span></span>, <span class="pl-c1">0</span>)); <span class="pl-c">//Should print something close to "1" (depending on how well the network trained, this value should vary from 1 by a very small amount)</span></pre></div>
+
+<hr>
+
+<h2>
+<a id="quicklinks" class="anchor" href="#quicklinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quicklinks</h2>
+
+<ul>
+<li> <a href="#Node">Node</a>
+</li>
+<li> <a href="#Connection">Connection</a>
+</li>
+<li> <a href="#Network">Network</a>
+
+<ul>
+<li><a href="#createNodes">createNodes</a></li>
+<li><a href="#addInput">addInput</a></li>
+<li><a href="#addHidden">addHidden</a></li>
+<li><a href="#addOutput">addOutput</a></li>
+<li><a href="#getNodeByID">getNodeByID</a></li>
+<li><a href="#getNode">getNode</a></li>
+<li><a href="#getConnection">getConnection</a></li>
+<li><a href="#calculate">calculate</a></li>
+<li><a href="#updateNodeConnections">updateNodeConnections</a></li>
+<li><a href="#calculateNodeValue">calculateNodeValue</a></li>
+<li><a href="#addConnection">addConnection</a></li>
+<li><a href="#createAllConnections">createAllConnections</a></li>
+<li><a href="#setNodeValue">setNodeValue</a></li>
+<li><a href="#setMultipleNodeValues">setMultipleNodeValues</a></li>
+</ul>
+</li>
+<li> <a href="#NetworkVisualizer">NetworkVisualizer</a>
+
+<ul>
+<li><a href="#drawNetwork">drawNetwork</a></li>
+</ul>
+</li>
+<li> <a href="#BackpropNetwork">BackpropNetwork</a>
+
+<ul>
+<li><a href="#backpropagate">backpropagate</a></li>
+<li><a href="#addTarget">addTarget</a></li>
+<li><a href="#setInputData">setInputData</a></li>
+<li><a href="#setTargetData">setTargetData</a></li>
+<li><a href="#getTotalError">getTotalError</a></li>
+</ul>
+</li>
+<li> <a href="#Gene">Gene</a>
+
+<ul>
+<li><a href="#getConnection">getConnection</a></li>
+</ul>
+</li>
+<li> <a href="#Genome">Genome</a>
+
+<ul>
+<li><a href="#getNetwork">getNetwork</a></li>
+</ul>
+</li>
+<li> <a href="#Species">Species</a>
+
+<ul>
+<li><a href="#cull">cull</a></li>
+<li><a href="#calculateAverageFitness">calculateAverageFitness</a></li>
+</ul>
+</li>
+<li> <a href="#Neuroevolution">Neuroevolution</a>
+
+<ul>
+<li><a href="#createInitialPopulation">createInitialPopulation</a></li>
+<li><a href="#mutate">mutate</a></li>
+<li><a href="#linkMutate">linkMutate</a></li>
+<li><a href="#pointMutate">pointMutate</a></li>
+<li><a href="#crossover">crossover</a></li>
+<li><a href="#evolve">evolve</a></li>
+<li><a href="#speciate">speciate</a></li>
+<li><a href="#cullSpecies">cullSpecies</a></li>
+<li><a href="#calculateSpeciesAvgFitness">calculateSpeciesAvgFitness</a></li>
+<li><a href="#makeBaby">makeBaby</a></li>
+<li><a href="#calculateFitnesses">calculateFitnesses</a></li>
+<li><a href="#getCompatibility">getCompatibility</a></li>
+<li><a href="#isSameSpecies">isSameSpecies</a></li>
+<li>
+<a href="#getElite">getElite</a>
+***</li>
+</ul>
+</li>
+</ul>
+
+<p><a name="Node"></a></p>
+
+<h3>
+<a id="node" class="anchor" href="#node" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Node</h3>
+
+<p>A node, representing a biological neuron.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID</td>
+<td><code>Number</code></td>
+<td>The ID of the node.</td>
+</tr>
+<tr>
+<td>val</td>
+<td><code>Number</code></td>
+<td>The value of the node.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="Connection"></a></p>
+
+<h3>
+<a id="connection" class="anchor" href="#connection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Connection</h3>
+
+<p>A connection, representing a biological synapse.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inID</td>
+<td><code>String</code></td>
+<td>The ID of the incoming node.</td>
+</tr>
+<tr>
+<td>outID</td>
+<td><code>String</code></td>
+<td>The ID of the outgoing node.</td>
+</tr>
+<tr>
+<td>weight</td>
+<td><code>Number</code></td>
+<td>The weight of the connection.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="Network"></a></p>
+
+<h3>
+<a id="network" class="anchor" href="#network" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Network</h3>
+
+<p>The neural network, containing nodes and connections.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td><code>Object</code></td>
+<td>The configuration to use.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="createNodes"></a></p>
+
+<blockquote>
+<h3>
+<a id="createnodesinputnum-hiddennum-outputnum" class="anchor" href="#createnodesinputnum-hiddennum-outputnum" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>createNodes(<em>inputNum, hiddenNum, outputNum</em>)</h3>
+
+<p>Populates the network with the given number of nodes of each type.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inputNum</td>
+<td><code>Number</code></td>
+<td>The number of input nodes to create.</td>
+</tr>
+<tr>
+<td>hiddenNum</td>
+<td><code>Number</code></td>
+<td>The number of hidden nodes to create.</td>
+</tr>
+<tr>
+<td>outputNum</td>
+<td><code>Number</code></td>
+<td>The number of output nodes to create.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="addInput"></a></p>
+
+<h3>
+<a id="addinputvalue" class="anchor" href="#addinputvalue" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addInput(<em>[value]</em>)</h3>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[value]</td>
+<td><code>Number</code></td>
+<td>The value to set the node to [Default is 0].</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="addHidden"></a></p>
+
+<h3>
+<a id="addhidden" class="anchor" href="#addhidden" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addHidden()</h3>
+
+<p>Creates a hidden node.</p>
+
+<hr>
+
+<p><a name="addOutput"></a></p>
+
+<h3>
+<a id="addoutput" class="anchor" href="#addoutput" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addOutput()</h3>
+
+<p>Creates an output node.</p>
+
+<hr>
+
+<p><a name="getNodeByID"></a></p>
+
+<h3>
+<a id="getnodebyidnodeid" class="anchor" href="#getnodebyidnodeid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getNodeByID(<em>nodeID</em>)</h3>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nodeID</td>
+<td><code>String</code></td>
+<td>The ID of the node to return.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Node</code> - The node with the given ID.</p>
+
+<hr>
+
+<p><a name="getNode"></a></p>
+
+<h3>
+<a id="getnodetype-index" class="anchor" href="#getnodetype-index" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getNode(<em>type, index</em>)</h3>
+
+<p>Returns the node of the given type at the given index.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td><code>String</code></td>
+<td>The type of node requested [Accepted arguments: "INPUT", "HIDDEN", "OUTPUT"].</td>
+</tr>
+<tr>
+<td>index</td>
+<td><code>Number</code></td>
+<td>The index of the node (from the array containing nodes of the requested type).</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Node</code> - The node requested. Will return null if no node is found.</p>
+
+<hr>
+
+<p><a name="getConnection"></a></p>
+
+<h3>
+<a id="getconnectionconnectionid" class="anchor" href="#getconnectionconnectionid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getConnection(<em>connectionID</em>)</h3>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>connectionID</td>
+<td><code>String</code></td>
+<td>The ID of the connection to return.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Connection</code> - The connection with the given ID.</p>
+
+<hr>
+
+<p><a name="calculate"></a></p>
+
+<h3>
+<a id="calculate" class="anchor" href="#calculate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculate()</h3>
+
+<p>Calculates the values of the nodes in the neural network.</p>
+
+<hr>
+
+<p><a name="updateNodeConnections"></a></p>
+
+<h3>
+<a id="updatenodeconnections" class="anchor" href="#updatenodeconnections" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>updateNodeConnections()</h3>
+
+<p>Updates the node's to reference the current connections.</p>
+
+<hr>
+
+<p><a name="calculateNodeValue"></a></p>
+
+<h3>
+<a id="calculatenodevaluenodeid" class="anchor" href="#calculatenodevaluenodeid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculateNodeValue(<em>nodeId</em>)</h3>
+
+<p>Calculates and updates the value of the node with the given ID.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nodeId</td>
+<td><code>String</code></td>
+<td>The ID of the node to update.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="addConnection"></a></p>
+
+<h3>
+<a id="addconnectioninid-outid-weight" class="anchor" href="#addconnectioninid-outid-weight" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addConnection(<em>inID, outID, [weight]</em>)</h3>
+
+<p>Creates a connection with the given values.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inID</td>
+<td><code>String</code></td>
+<td>The ID of the node that the connection comes from.</td>
+</tr>
+<tr>
+<td>outID</td>
+<td><code>String</code></td>
+<td>The ID of the node that the connection enters.</td>
+</tr>
+<tr>
+<td>[weight]</td>
+<td><code>Number</code></td>
+<td>The weight of the connection [Default is 1].</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="createAllConnections"></a></p>
+
+<h3>
+<a id="createallconnectionsrandomweights" class="anchor" href="#createallconnectionsrandomweights" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>createAllConnections(<em>randomWeights</em>)</h3>
+
+<p>Creates all possible connections between nodes, not including connections to the bias node.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>randomWeights</td>
+<td><code>Boolean</code></td>
+<td>Whether to choose a random weight between -1 and 1, or to default to 1.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="setNodeValue"></a></p>
+
+<h3>
+<a id="setnodevaluenodeid-value" class="anchor" href="#setnodevaluenodeid-value" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setNodeValue(<em>nodeID, value</em>)</h3>
+
+<p>Sets the value of the node with the given ID to the given value.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nodeID</td>
+<td><code>String</code></td>
+<td>The ID of the node to modify.</td>
+</tr>
+<tr>
+<td>value</td>
+<td><code>Number</code></td>
+<td>The value to set the node to.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="setMultipleNodeValues"></a></p>
+
+<h3>
+<a id="setmultiplenodevaluesvaluesbyid" class="anchor" href="#setmultiplenodevaluesvaluesbyid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setMultipleNodeValues(<em>valuesByID</em>)</h3>
+
+<p>Sets the value of multiple nodes, given an object with node ID's as parameters and node values as values.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>valuesByID</td>
+<td><code>Object</code></td>
+<td>The values to set the nodes to.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+</blockquote>
+
+<p><a name="NetworkVisualizer"></a></p>
+
+<h3>
+<a id="networkvisualizer" class="anchor" href="#networkvisualizer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NetworkVisualizer</h3>
+
+<p>Used to visualize a neural network.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td><code>Object</code></td>
+<td>The configuration to use.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="drawNetwork"></a></p>
+
+<blockquote>
+<h3>
+<a id="drawnetworknetwork" class="anchor" href="#drawnetworknetwork" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>drawNetwork(<em>network</em>)</h3>
+
+<p>Draws the visualized network upon the canvas.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>network</td>
+<td><code>Network</code></td>
+<td>The network to visualize.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+</blockquote>
+
+<p><a name="BackpropNetwork"></a></p>
+
+<h3>
+<a id="backpropnetwork" class="anchor" href="#backpropnetwork" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BackpropNetwork</h3>
+
+<p>Neural network that is optimized via backpropagation.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td><code>Object</code></td>
+<td>The configuration to use.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="backpropagate"></a></p>
+
+<blockquote>
+<h3>
+<a id="backpropagate" class="anchor" href="#backpropagate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>backpropagate()</h3>
+
+<p>Backpropagates the neural network, using the input and training data given.</p>
+
+<hr>
+
+<p><a name="addTarget"></a></p>
+
+<h3>
+<a id="addtargetoutputnodeid-target" class="anchor" href="#addtargetoutputnodeid-target" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addTarget(<em>outputNodeID, target</em>)</h3>
+
+<p>Adds a target result to the target data. This will be compared to the output in order to determine error.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>outputNodeID</td>
+<td><code>String</code></td>
+<td>The ID of the output node whose value will be compared to the target.</td>
+</tr>
+<tr>
+<td>target</td>
+<td><code>Number</code></td>
+<td>The value to compare against the output when checking for errors.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="setInputData"></a></p>
+
+<h3>
+<a id="setinputdataarray" class="anchor" href="#setinputdataarray" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setInputData(<em>array</em>)</h3>
+
+<p>Sets the input data that will be compared to the target data.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>array</td>
+<td><code>Array</code></td>
+<td>An array containing the data to be inputted (ex. [0, 1] will set the first input node</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="setTargetData"></a></p>
+
+<h3>
+<a id="settargetdataarray" class="anchor" href="#settargetdataarray" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setTargetData(<em>array</em>)</h3>
+
+<p>Sets the target data that will be used to check for total error.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>array</td>
+<td><code>Array</code></td>
+<td>An array containing the data to be compared against (ex. [0, 1] will compare the first</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="getTotalError"></a></p>
+
+<h3>
+<a id="gettotalerror" class="anchor" href="#gettotalerror" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getTotalError()</h3>
+
+<p>Calculates the total error of all the outputs' values compared to the target data.
+<strong><em>Returned</em></strong> : 
+<code>Number</code> - The total error.</p>
+
+<hr>
+</blockquote>
+
+<p><a name="Gene"></a></p>
+
+<h3>
+<a id="gene" class="anchor" href="#gene" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gene</h3>
+
+<p>A gene containing the data for a single connection in the neural network.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inID</td>
+<td><code>String</code></td>
+<td>The ID of the incoming node.</td>
+</tr>
+<tr>
+<td>outID</td>
+<td><code>String</code></td>
+<td>The ID of the outgoing node.</td>
+</tr>
+<tr>
+<td>weight</td>
+<td><code>Number</code></td>
+<td>The weight of the connection to create.</td>
+</tr>
+<tr>
+<td>innovation</td>
+<td><code>Number</code></td>
+<td>The innovation number of the gene.</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td><code>Boolean</code></td>
+<td>Whether the gene is expressed or not.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="getConnection"></a></p>
+
+<blockquote>
+<h3>
+<a id="getconnection" class="anchor" href="#getconnection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getConnection()</h3>
+
+<p>Returns the connection that the gene represents.
+<strong><em>Returned</em></strong> : 
+<code>Connection</code> - The generated connection.</p>
+
+<hr>
+</blockquote>
+
+<p><a name="Genome"></a></p>
+
+<h3>
+<a id="genome" class="anchor" href="#genome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Genome</h3>
+
+<p>A genome containing genes that will make up the neural network.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inputNodes</td>
+<td><code>Number</code></td>
+<td>The number of input nodes to create.</td>
+</tr>
+<tr>
+<td>outputNodes</td>
+<td><code>Number</code></td>
+<td>The number of output nodes to create.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="getNetwork"></a></p>
+
+<blockquote>
+<h3>
+<a id="getnetwork" class="anchor" href="#getnetwork" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getNetwork()</h3>
+
+<p>Returns the network that the genome represents.
+<strong><em>Returned</em></strong> : 
+<code>Network</code> - The generated network.</p>
+
+<hr>
+</blockquote>
+
+<p><a name="Species"></a></p>
+
+<h3>
+<a id="species" class="anchor" href="#species" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Species</h3>
+
+<p>A species of genomes that contains genomes which closely resemble one another, enough so that they are able to breed.</p>
+
+<hr>
+
+<p><a name="cull"></a></p>
+
+<blockquote>
+<h3>
+<a id="cullremaining" class="anchor" href="#cullremaining" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cull(<em>[remaining]</em>)</h3>
+
+<p>Culls the genomes to the given amount by removing less fit genomes.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[remaining]</td>
+<td><code>Number</code></td>
+<td>The number of genomes to cull to [Default is half the size of the species (rounded up)].</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="calculateAverageFitness"></a></p>
+
+<h3>
+<a id="calculateaveragefitness" class="anchor" href="#calculateaveragefitness" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculateAverageFitness()</h3>
+
+<p>Calculates the average fitness of the species.</p>
+
+<hr>
+</blockquote>
+
+<p><a name="Neuroevolution"></a></p>
+
+<h3>
+<a id="neuroevolution" class="anchor" href="#neuroevolution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Neuroevolution</h3>
+
+<p>Creates and optimizes neural networks via neuroevolution.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td><code>Object</code></td>
+<td>The configuration to use.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="createInitialPopulation"></a></p>
+
+<blockquote>
+<h3>
+<a id="createinitialpopulation" class="anchor" href="#createinitialpopulation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>createInitialPopulation()</h3>
+
+<p>Populates the population with empty genomes, and then mutates the genomes.</p>
+
+<hr>
+
+<p><a name="mutate"></a></p>
+
+<h3>
+<a id="mutate" class="anchor" href="#mutate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>mutate()</h3>
+
+<p>Mutates the entire population based on the mutation rates.</p>
+
+<hr>
+
+<p><a name="linkMutate"></a></p>
+
+<h3>
+<a id="linkmutategenome" class="anchor" href="#linkmutategenome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>linkMutate(<em>genome</em>)</h3>
+
+<p>Attempts to create a new connection gene in the given genome.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genome</td>
+<td><code>Genome</code></td>
+<td>The genome to mutate.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Genome</code> - The mutated genome.</p>
+
+<hr>
+
+<p><a name="pointMutate"></a></p>
+
+<h3>
+<a id="pointmutategene" class="anchor" href="#pointmutategene" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>pointMutate(<em>gene</em>)</h3>
+
+<p>Mutates the given gene based on the mutation rates.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gene</td>
+<td><code>Gene</code></td>
+<td>The gene to mutate.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Gene</code> - The mutated gene.</p>
+
+<hr>
+
+<p><a name="crossover"></a></p>
+
+<h3>
+<a id="crossoverfirstgenome-secondgenome" class="anchor" href="#crossoverfirstgenome-secondgenome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>crossover(<em>firstGenome, secondGenome</em>)</h3>
+
+<p>Crosses two parent genomes with one another, forming a child genome.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>firstGenome</td>
+<td><code>Genome</code></td>
+<td>The first genome to mate.</td>
+</tr>
+<tr>
+<td>secondGenome</td>
+<td><code>Genome</code></td>
+<td>The second genome to mate.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Genome</code> - The resultant child genome.</p>
+
+<hr>
+
+<p><a name="evolve"></a></p>
+
+<h3>
+<a id="evolve" class="anchor" href="#evolve" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>evolve()</h3>
+
+<p>Evolves the population by creating a new generation and mutating the children.</p>
+
+<hr>
+
+<p><a name="speciate"></a></p>
+
+<h3>
+<a id="speciate" class="anchor" href="#speciate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>speciate()</h3>
+
+<p>Sorts the genomes into different species.</p>
+
+<hr>
+
+<p><a name="cullSpecies"></a></p>
+
+<h3>
+<a id="cullspeciesremaining" class="anchor" href="#cullspeciesremaining" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cullSpecies(<em>[remaining]</em>)</h3>
+
+<p>Culls all the species to the given amount by removing less fit members of each species.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[remaining]</td>
+<td><code>Number</code></td>
+<td>The number of genomes to cull all the species to [Default is half the size of the species].</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<p><a name="calculateSpeciesAvgFitness"></a></p>
+
+<h3>
+<a id="calculatespeciesavgfitness" class="anchor" href="#calculatespeciesavgfitness" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculateSpeciesAvgFitness()</h3>
+
+<p>Calculates the average fitness of all the species.</p>
+
+<hr>
+
+<p><a name="makeBaby"></a></p>
+
+<h3>
+<a id="makebabyspecies" class="anchor" href="#makebabyspecies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>makeBaby(<em>species</em>)</h3>
+
+<p>Creates a baby in the given species, with fitter genomes having a higher chance to reproduce.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>species</td>
+<td><code>Species</code></td>
+<td>The species to create a baby in.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Genome</code> - The resultant baby.</p>
+
+<hr>
+
+<p><a name="calculateFitnesses"></a></p>
+
+<h3>
+<a id="calculatefitnesses" class="anchor" href="#calculatefitnesses" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculateFitnesses()</h3>
+
+<p>Calculates the fitness of all the genomes in the population.</p>
+
+<hr>
+
+<p><a name="getCompatibility"></a></p>
+
+<h3>
+<a id="getcompatibilitygenomea-genomeb" class="anchor" href="#getcompatibilitygenomea-genomeb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getCompatibility(<em>genomeA, genomeB</em>)</h3>
+
+<p>Returns the relative compatibility metric for the given genomes.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genomeA</td>
+<td><code>Genome</code></td>
+<td>The first genome to compare.</td>
+</tr>
+<tr>
+<td>genomeB</td>
+<td><code>Genome</code></td>
+<td>The second genome to compare.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Number</code> - The relative compatibility metric.</p>
+
+<hr>
+
+<p><a name="isSameSpecies"></a></p>
+
+<h3>
+<a id="issamespeciesgenomea-genomeb" class="anchor" href="#issamespeciesgenomea-genomeb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>isSameSpecies(<em>genomeA, genomeB</em>)</h3>
+
+<p>Determines whether the given genomes are from the same species.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genomeA</td>
+<td><code>Genome</code></td>
+<td>The first genome to compare.</td>
+</tr>
+<tr>
+<td>genomeB</td>
+<td><code>Genome</code></td>
+<td>The second genome to compare.</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong><em>Returned</em></strong> : 
+<code>Boolean</code> - Whether the given genomes are from the same species.</p>
+
+<hr>
+
+<p><a name="getElite"></a></p>
+
+<h3>
+<a id="getelite" class="anchor" href="#getelite" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getElite()</h3>
+
+<p>Returns the genome with the highest fitness in the population.
+<strong><em>Returned</em></strong> : 
+<code>Genome</code> - The elite genome.</p>
+
+<hr>
+</blockquote>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/IdreesInc/Cerebrum">Cerebrum.js</a> is maintained by <a href="https://github.com/IdreesInc">IdreesInc</a>.</span>
