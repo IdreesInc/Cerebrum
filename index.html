@@ -42,11 +42,11 @@
 
 <p>Lets try out Cerebrum.js by creating a simple XOR test case that we will train using backpropagation.</p>
 
-<p>Reference the library:</p>
+<p>First, you will want to reference the library:</p>
 
 <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>cerebrum.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
-<p>Then, create a variable in javascript such as the one below:</p>
+<p>Then, you wil create a backpropagating network and configure it to best match the problem at hand:</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BackpropNetwork</span>({             
                 inputNodes<span class="pl-k">:</span> <span class="pl-c1">2</span>,
@@ -144,6 +144,7 @@
 <li><a href="#addConnection">addConnection</a></li>
 <li><a href="#createAllConnections">createAllConnections</a></li>
 <li><a href="#setNodeValue">setNodeValue</a></li>
+<li><a href="#setInputs">setInputs</a></li>
 <li><a href="#setMultipleNodeValues">setMultipleNodeValues</a></li>
 </ul>
 </li>
@@ -296,6 +297,15 @@
 </tbody>
 </table>
 
+<p><em>**Example Usage: *</em>* </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Network</span>({
+    inputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>, <span class="pl-c">//The number of input nodes to create</span>
+    hiddenNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>, <span class="pl-c">//The number of hidden nodes to create</span>
+    outputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>, <span class="pl-c">//The number of output nodes to create</span>
+    createAllConnections<span class="pl-k">:</span> <span class="pl-c1">true</span> <span class="pl-c">//Whether to create all possible connections</span>
+});</pre></div>
+
 <hr>
 
 <p><a name="createNodes"></a></p>
@@ -382,6 +392,8 @@
 <h3>
 <a id="getnodebyidnodeid" class="anchor" href="#getnodebyidnodeid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getNodeByID(<em>nodeID</em>)</h3>
 
+<p>Returns the node with the given ID.</p>
+
 <table>
 <thead>
 <tr>
@@ -443,6 +455,8 @@
 <h3>
 <a id="getconnectionconnectionid" class="anchor" href="#getconnectionconnectionid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getConnection(<em>connectionID</em>)</h3>
 
+<p>Returns the connection with the given ID.</p>
+
 <table>
 <thead>
 <tr>
@@ -488,7 +502,7 @@
 <h3>
 <a id="calculatenodevaluenodeid" class="anchor" href="#calculatenodevaluenodeid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>calculateNodeValue(<em>nodeId</em>)</h3>
 
-<p>Calculates and updates the value of the node with the given ID.</p>
+<p>Calculates and updates the value of the node with the given ID. Node values are computed using a sigmoid function.</p>
 
 <table>
 <thead>
@@ -602,6 +616,39 @@
 
 <hr>
 
+<p><a name="setInputs"></a></p>
+
+<h3>
+<a id="setinputsarray" class="anchor" href="#setinputsarray" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setInputs(<em>array</em>)</h3>
+
+<p>Sets the values of the input neurons to the given values.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>array</td>
+<td><code>Array</code></td>
+<td>An array of values to set the input node values to.</td>
+</tr>
+</tbody>
+</table>
+
+<p><em>**Example Usage: *</em>* </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Network</span>({
+    inputNodes<span class="pl-k">:</span> <span class="pl-c1">3</span>
+});
+<span class="pl-smi">network</span>.<span class="pl-en">setInputs</span>([<span class="pl-c1">0.25</span>, <span class="pl-c1">0.5</span>, <span class="pl-c1">0.75</span>]); <span class="pl-c">//Set the three input node values to 0.25, 0.5, and 0.75</span></pre></div>
+
+<hr>
+
 <p><a name="setMultipleNodeValues"></a></p>
 
 <h3>
@@ -634,7 +681,7 @@
 <h3>
 <a id="networkvisualizer" class="anchor" href="#networkvisualizer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NetworkVisualizer</h3>
 
-<p>Used to visualize a neural network.</p>
+<p>A visualization of the neural network, showing all connections and nodes.</p>
 
 <table>
 <thead>
@@ -652,6 +699,19 @@
 </tr>
 </tbody>
 </table>
+
+<p><em>**Example Usage: *</em>* </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> visualizer <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">NetworkVisualizer</span>({
+    <span class="pl-v">this</span>.<span class="pl-smi">canvas</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>NetworkVisualizer<span class="pl-pds">"</span></span>, <span class="pl-c">//The id of the canvas element to draw the visualizer on</span>
+    <span class="pl-v">this</span>.<span class="pl-c1">backgroundColor</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>#FFFFFF<span class="pl-pds">"</span></span>, <span class="pl-c">//The background color of the visualizer</span>
+    <span class="pl-v">this</span>.<span class="pl-smi">nodeRadius</span> <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-c1">1</span>, <span class="pl-c">//The node radius [If left at -1, the node radius will be calculated automatically to best fit the dimensions of the visualizer (this is recommended)]</span>
+    <span class="pl-v">this</span>.<span class="pl-smi">nodeColor</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>grey<span class="pl-pds">"</span></span>, <span class="pl-c">//The color of the node (Note: transparency will vary depending on the node's value)</span>
+    <span class="pl-v">this</span>.<span class="pl-smi">positiveConnectionColor</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>green<span class="pl-pds">"</span></span>, <span class="pl-c">//The color to represent a positive connection</span>
+    <span class="pl-v">this</span>.<span class="pl-smi">negativeConnectionColor</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>red<span class="pl-pds">"</span></span>, <span class="pl-c">//The color to represent a negative connection</span>
+    <span class="pl-v">this</span>.<span class="pl-smi">connectionStrokeModifier</span> <span class="pl-k">=</span> <span class="pl-c1">1</span> <span class="pl-c">//The maximum stroke to draw the connection line with (Note: stroke varies based on connection weight)</span>
+});
+<span class="pl-smi">visualizer</span>.<span class="pl-en">drawNetwork</span>(network); <span class="pl-c">//Draws the given network</span></pre></div>
 
 <hr>
 
@@ -707,6 +767,18 @@
 </tbody>
 </table>
 
+<p><em>**Example Usage: *</em>* </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> network <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">BackpropNetwork</span>({
+    inputNodes<span class="pl-k">:</span> <span class="pl-c1">2</span>, <span class="pl-c">//The number of input nodes to create</span>
+    hiddenNodes<span class="pl-k">:</span> <span class="pl-c1">3</span>, <span class="pl-c">//The number of hidden nodes to create</span>
+    outputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>, <span class="pl-c">//The number of output nodes to create</span>
+    createAllConnections<span class="pl-k">:</span> <span class="pl-c1">true</span>, <span class="pl-c">//Whether to create all possible connections</span>
+    inputData<span class="pl-k">:</span> [[<span class="pl-c1">1</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>], [<span class="pl-c1">0</span>, <span class="pl-c1">0</span>], [<span class="pl-c1">1</span>, <span class="pl-c1">1</span>]], <span class="pl-c">//The values to set the input nodes to when training. Each array corresponds to the array at the same index in the target data.</span>
+    targetData<span class="pl-k">:</span> [[<span class="pl-c1">1</span>], [<span class="pl-c1">1</span>], [<span class="pl-c1">0</span>], [<span class="pl-c1">0</span>]], <span class="pl-c">//The values to expect from the output nodes when training</span>
+    learningRate<span class="pl-k">:</span> <span class="pl-c1">0.5</span> <span class="pl-c">//The rate at which to update the connection weights</span>
+});</pre></div>
+
 <hr>
 
 <p><a name="backpropagate"></a></p>
@@ -715,7 +787,7 @@
 <h3>
 <a id="backpropagate" class="anchor" href="#backpropagate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>backpropagate()</h3>
 
-<p>Backpropagates the neural network, using the input and training data given.</p>
+<p>Backpropagates the neural network, using the input and training data given. Currently does not affect connections to the bias node.</p>
 
 <hr>
 
@@ -968,7 +1040,7 @@
 <h3>
 <a id="neuroevolution" class="anchor" href="#neuroevolution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Neuroevolution</h3>
 
-<p>Creates and optimizes neural networks via neuroevolution.</p>
+<p>Creates and optimizes neural networks via neuroevolution, using the Neuroevolution of Augmenting Topologies method.</p>
 
 <table>
 <thead>
@@ -986,6 +1058,27 @@
 </tr>
 </tbody>
 </table>
+
+<p><em>**Example Usage: *</em>* </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> neuroevolution <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Neuroevolution</span>({
+    inputNodes<span class="pl-k">:</span> <span class="pl-c1">2</span>, <span class="pl-c">//The number of input nodes to create</span>
+    outputNodes<span class="pl-k">:</span> <span class="pl-c1">1</span>, <span class="pl-c">//The number of output nodes to create</span>
+    hiddenNodeCap<span class="pl-k">:</span> <span class="pl-c1">3</span>, <span class="pl-c">//The maximum number of hidden nodes to create through mutation</span>
+    populationSize<span class="pl-k">:</span> <span class="pl-c1">100</span>, <span class="pl-c">//The number of individuals to create</span>
+    deltaDisjoint<span class="pl-k">:</span> <span class="pl-c1">2</span>, <span class="pl-c">//The weight of disjoint genes when determining the distance between genomes</span>
+    deltaWeights<span class="pl-k">:</span> <span class="pl-c1">0.4</span>, <span class="pl-c">//The weight of weight differences when determining the distance between genomes</span>
+    deltaThreshold<span class="pl-k">:</span> <span class="pl-c1">2</span>, <span class="pl-c">//The difference between genomes required for the genomes to be classified as being of different species</span>
+    mutationRates<span class="pl-k">:</span> { <span class="pl-c">//The probability that a given mutation occurs when evolving a genome (Note: Some mutation probabilities are calculated per gene, rather than per genome)</span>
+        createConnection<span class="pl-k">:</span> <span class="pl-c1">0.05</span>, <span class="pl-c">//The probability of a new connection to be created</span>
+        createNode<span class="pl-k">:</span> <span class="pl-c1">0.02</span>, <span class="pl-c">//The probability of a new node being created (by splitting a connection and placing a node in between it)</span>
+        modifyWeight<span class="pl-k">:</span> <span class="pl-c1">0.15</span>, <span class="pl-c">//The probability of modifying a connection's weight</span>
+        enableGene<span class="pl-k">:</span> <span class="pl-c1">0.05</span>, <span class="pl-c">//The probability of enabling a disabled gene</span>
+        disableGene<span class="pl-k">:</span> <span class="pl-c1">0.1</span>, <span class="pl-c">//The probability of disabling an enabled gene</span>
+        createBias<span class="pl-k">:</span> <span class="pl-c1">0.1</span>, <span class="pl-c">//The probability of creating a connection from a node to the bias node</span>
+        weightMutationStep<span class="pl-k">:</span> <span class="pl-c1">2</span> <span class="pl-c">//The maximum amount that a modifyWeight mutation will modify the weight of a connection</span>
+    }
+});</pre></div>
 
 <hr>
 
