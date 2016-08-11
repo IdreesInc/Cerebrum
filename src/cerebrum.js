@@ -3,7 +3,7 @@
  * @param {Number} ID  The ID of the node.
  * @param {Number} val The value of the node.
  */
- function Node(ID, val) {
+ var Node = function(ID, val) {
  	this.id = ID;
  	this.incomingConnections = [];
  	this.outgoingConnections = [];
@@ -12,7 +12,7 @@
  	}
  	this.value = val;
  	this.bias = 0;
- }
+ };
 
 /**
  * A connection, representing a biological synapse.
@@ -20,7 +20,7 @@
  * @param {String} outID  The ID of the outgoing node.
  * @param {Number} weight The weight of the connection.
  */
- function Connection(inID, outID, weight) {
+ var Connection = function(inID, outID, weight) {
  	this.in = inID;
  	this.out = outID;
  	if (weight === undefined) {
@@ -28,7 +28,7 @@
  	}
  	this.id = inID + ":" + outID;
  	this.weight = weight;
- }
+ };
 
 /**
  * The neural network, containing nodes and connections.
@@ -103,7 +103,6 @@
  };
 
 /**
- * Returns the node with the given ID.
  * @param  {String} nodeID The ID of the node to return.
  * @return {Node} The node with the given ID.
  */
@@ -129,7 +128,6 @@
  };
 
 /**
- * Returns the connection with the given ID.
  * @param  {String} connectionID The ID of the connection to return.
  * @return {Connection} The connection with the given ID.
  */
@@ -165,7 +163,7 @@
  };
 
 /**
- * Calculates and updates the value of the node with the given ID. Node values are computed using a sigmoid function.
+ * Calculates and updates the value of the node with the given ID.
  * @param  {String} nodeId The ID of the node to update.
  */
  Network.prototype.calculateNodeValue = function(nodeID) {
@@ -234,10 +232,7 @@
  	this.nodes[nodeID].value = value;
  };
 
-/**
- * Sets the values of the input neurons to the given values.
- * @param {Array} array An array of values to set the input node values to.
- */
+
  Network.prototype.setInputs = function(array) {
  	for (var i = 0; i < array.length; i++) {
  		this.nodes[this.inputs[i]].value = array[i];
@@ -246,7 +241,7 @@
 
 /**
  * Sets the value of multiple nodes, given an object with node ID's as parameters and node values as values.
- * @param {Object} valuesByID The values to set the nodes to.
+ * @param {Object} The values to set the nodes to.
  */
  Network.prototype.setMultipleNodeValues = function(valuesByID) {
  	for (var key in valuesByID) {
@@ -256,7 +251,7 @@
 
 
 /**
- * A visualization of the neural network, showing all connections and nodes.
+ * Used to visualize a neural network.
  * @param {Object} config The configuration to use.
  */
  function NetworkVisualizer(config) {
@@ -388,7 +383,7 @@
  }
 
 /**
- * Backpropagates the neural network, using the input and training data given. Currently does not affect connections to the bias node.
+ * Backpropagates the neural network, using the input and training data given.
  */
  BackpropNetwork.prototype.backpropagate = function() {
  	this.step++;
@@ -445,7 +440,7 @@
 
 /**
  * Sets the input data that will be compared to the target data.
- * @param {Array} array An array containing the data to be inputted (ex. [0, 1] will set the first input node
+ * @param {Array} An array containing the data to be inputted (ex. [0, 1] will set the first input node
  * to have a value of 0 and the second to have a value of 1). Each array argument represents a single
  * step, and will be compared against the parallel set in the target data.
  */
@@ -467,7 +462,7 @@
 
 /**
  * Sets the target data that will be used to check for total error.
- * @param {Array} array An array containing the data to be compared against (ex. [0, 1] will compare the first
+ * @param {Array} An array containing the data to be compared against (ex. [0, 1] will compare the first
  * output node against 0 and the second against 1). Each array argument represents a single step.
  */
  BackpropNetwork.prototype.setTargetData = function() {
@@ -554,9 +549,6 @@
  	return false;
  };
 
-/**
- * A species of genomes that contains genomes which closely resemble one another, enough so that they are able to breed.
- */
  function Species() {
  	this.genomes = [];
  	this.averageFitness = 0;
@@ -793,7 +785,7 @@
 
  /**
  * Mutates the given gene based on the mutation rates.
- * @param  {Gene} gene The gene to mutate.
+ * @param  {Gene} The gene to mutate.
  * @return {Gene} The mutated gene.
  */
  Neuroevolution.prototype.pointMutate = function(gene) {
