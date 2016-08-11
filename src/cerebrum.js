@@ -612,7 +612,7 @@
  };
 
 /**
- * Creates and optimizes neural networks via neuroevolution.
+ * Creates and optimizes neural networks via neuroevolution, using the Neuroevolution of Augmenting Topologies method.
  * @param {Object} config The configuration to use.
  */
  function Neuroevolution(config) {

@@ -12,11 +12,11 @@ Give your applications a mind of their own with the power of deep learning algor
 #### Example 1: Backpropagation:
 Lets try out Cerebrum.js by creating a simple XOR test case that we will train using backpropagation.
 
-Reference the library:
+First, you will want to reference the library:
 ```html
 <script src="cerebrum.js"></script>
 ```
-Then, create a variable in javascript such as the one below:
+Then, you wil create a backpropagating network and configure it to best match the problem at hand:
 ```js
 var network = new BackpropNetwork({				
 				inputNodes: 2,
@@ -102,10 +102,62 @@ var network = new Network({
 ```
 [/Network]
 
+[BackpropNetwork]
+```js
+var network = new BackpropNetwork({
+	inputNodes: 2, //The number of input nodes to create
+	hiddenNodes: 3, //The number of hidden nodes to create
+	outputNodes: 1, //The number of output nodes to create
+	createAllConnections: true, //Whether to create all possible connections
+	inputData: [[1, 0], [0, 1], [0, 0], [1, 1]], //The values to set the input nodes to when training. Each array corresponds to the array at the same index in the target data.
+	targetData: [[1], [1], [0], [0]], //The values to expect from the output nodes when training
+	learningRate: 0.5 //The rate at which to update the connection weights
+});
+```
+[/BackpropNetwork]
+
+[Neuroevolution]
+```js
+var neuroevolution = new Neuroevolution({
+	inputNodes: 2, //The number of input nodes to create
+	outputNodes: 1, //The number of output nodes to create
+	hiddenNodeCap: 3, //The maximum number of hidden nodes to create through mutation
+	populationSize: 100, //The number of individuals to create
+	deltaDisjoint: 2, //The weight of disjoint genes when determining the distance between genomes
+	deltaWeights: 0.4, //The weight of weight differences when determining the distance between genomes
+	deltaThreshold: 2, //The difference between genomes required for the genomes to be classified as being of different species
+	mutationRates: { //The probability that a given mutation occurs when evolving a genome (Note: Some mutation probabilities are calculated per gene, rather than per genome)
+		createConnection: 0.05, //The probability of a new connection to be created
+ 		createNode: 0.02, //The probability of a new node being created (by splitting a connection and placing a node in between it)
+ 		modifyWeight: 0.15, //The probability of modifying a connection's weight
+ 		enableGene: 0.05, //The probability of enabling a disabled gene
+ 		disableGene: 0.1, //The probability of disabling an enabled gene
+ 		createBias: 0.1, //The probability of creating a connection from a node to the bias node
+ 		weightMutationStep: 2 //The maximum amount that a modifyWeight mutation will modify the weight of a connection
+ 	}
+});
+```
+[/Neuroevolution]
+
+[NetworkVisualizer]
+```js
+var visualizer = new NetworkVisualizer({
+ 	this.canvas = "NetworkVisualizer", //The id of the canvas element to draw the visualizer on
+ 	this.backgroundColor = "#FFFFFF", //The background color of the visualizer
+ 	this.nodeRadius = -1, //The node radius [If left at -1, the node radius will be calculated automatically to best fit the dimensions of the visualizer (this is recommended)]
+ 	this.nodeColor = "grey", //The color of the node (Note: transparency will vary depending on the node's value)
+ 	this.positiveConnectionColor = "green", //The color to represent a positive connection
+ 	this.negativeConnectionColor = "red", //The color to represent a negative connection
+ 	this.connectionStrokeModifier = 1 //The maximum stroke to draw the connection line with (Note: stroke varies based on connection weight)
+});
+visualizer.drawNetwork(network); //Draws the given network
+```
+[/NetworkVisualizer]
+
 [setInputs]
 ```js
 var network = new Network({
-	inputNodes: 3,
+	inputNodes: 3
 });
 network.setInputs([0.25, 0.5, 0.75]); //Set the three input node values to 0.25, 0.5, and 0.75
 ```
