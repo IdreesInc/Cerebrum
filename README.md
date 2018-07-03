@@ -6,6 +6,9 @@ Give your applications a mind of their own with the power of deep learning algor
   - Use backpropagation or neuroevolution to train the networks
   - Simple and easy to use syntax
   - No external dependencies
+  
+ ### Important Note
+ This project was created more as a learning experience than anything, and I would recommend others to use machine learning libraries that have greater community support and more technologies implemented. Some notable examples include [Synaptic.js](http://caza.la/synaptic/#/) and of course TensorFlow. Whatever you decide to do, good luck and happy coding!
 
 ### Examples
 #### Example 1: Backpropagation:
