@@ -10,6 +10,8 @@ Give your applications a mind of their own with the power of deep learning algor
  ### Important Note
  This project was created more as a learning experience than anything, and I would recommend others to use machine learning libraries that have greater community support and more technologies implemented. Some notable examples include [Synaptic.js](http://caza.la/synaptic/#/) and of course TensorFlow. Whatever you decide to do, good luck and happy coding!
 
+To check out more of my projects, click [here](https://idreesinc.com?utm_source=github&utm_medium=readme&utm_campaign=cerebrum)
+
 ### Examples
 #### Example 1: Backpropagation:
 Lets try out Cerebrum.js by creating a simple XOR test case that we will train using backpropagation.
